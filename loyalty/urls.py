@@ -10,5 +10,5 @@ urlpatterns = [
     path('loyalty/programs', LoyaltyProgramListView.as_view(), name="loyalty-programs"),
     path('loyalty/programs/subscriptions', LoyaltyProgramSubscriptionListView.as_view(), name="loyalty-programs-subscriptions"),
     path('loyalty/programs/subscriptions/<int:pk>', LoyaltyProgramSubscriptionDetailView.as_view(), name="loyalty-programs-subscriptions-detail"),
-    path('loyalty/<int:pk>/transactions', LoyaltyProgramTransactionListView.as_view(), name="loyalty-programs-transactions"),
+    path('loyalty/transactions', LoyaltyProgramTransactionListView.as_view(), name="loyalty-programs-transactions"),
 ]

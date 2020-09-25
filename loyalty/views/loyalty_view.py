@@ -8,7 +8,7 @@ from django.db.models import Q
 
 from ..models import LoyaltyUserPoints, Partnerships, LoyaltyProgram, LoyaltyProgramTransactions, LoyaltyProgramSubscriptions
 from accounts.models import User
-from ..serializers.loyalty_serializer import LoyaltyUserCreateSerializer, LoyaltyUserDetailsSerializer, LoyaltyProgramCreateSerializer, PartnershipsCreateSerializer, PartnershipsDetailsSerializer, LoyaltyProgramDetailsSerializer, LoyaltyProgramCreateSerializer, LoyaltyProgramTransactionSerializer, LoyaltyProgramTransactionDetailsSerializer, LoyaltyProgramSubscriptionsDataSerializer, LoyaltyProgramSubscriptionsDetailsSerializer, LoyaltyProgramSubscriptionsCreateSerializer
+from ..serializers.loyalty_serializer import LoyaltyUserCreateSerializer, LoyaltyUserDetailsSerializer, LoyaltyProgramCreateSerializer, PartnershipsCreateSerializer, PartnershipsDetailsSerializer, LoyaltyProgramDetailsSerializer, LoyaltyProgramCreateSerializer, LoyaltyProgramTransactionSerializer, LoyaltyProgramTransactionDetailsSerializer, LoyaltyProgramSubscriptionsDataSerializer, LoyaltyProgramSubscriptionsDetailsSerializer, LoyaltyProgramSubscriptionsCreateSerializer, LoyaltyProgramSpendSerializer
 
 class LoyaltyUserView(APIView):
     """
@@ -209,35 +209,72 @@ class LoyaltyProgramTransactionListView(APIView):
     """
     permission_classes = (permissions.IsAuthenticated, )
 
-    def get(self, request, pk, format=None):
+    def get(self, request, format=None):
         serializer = LoyaltyProgramTransactionDetailsSerializer(LoyaltyProgramTransactions.objects.filter(related_program=pk), many=True)
         return Response({"status":200, "data":serializer.data}, status=status.HTTP_200_OK)
 
-    def post(self, request, pk, format=None):
-        serializer = LoyaltyProgramCreateSerializer(data=request.data)
-        if serializer.is_valid():
+    def post(self, request, format=None):
 
-            transaction_data = {
-                "related_program":serializer.data["related_program"],
-                "related_user":serializer.data["related_user"],
-                "transaction_amount":serializer.data["transaction_amount"],
-                "receipt_number":serializer.data["receipt_number"],
-                "payment_mode":serializer.data["payment_mode"],
-                "transaction_date":serializer.data["transaction_date"],
-                "points_awarded":0.03*float(serializer.data["transaction_amount"])
-            }
+        transaction_type = request.query_params.get("action", None)
+        if transaction_type == "earn":
+            serializer = LoyaltyProgramCreateSerializer(data=request.data)
+            if serializer.is_valid():
 
-            loyalty_transaction = LoyaltyProgramTransactionSerializer(data=transaction_data)
-            loyalty_transaction.is_valid(raise_exception=True)
-            loyalty_transaction.save()
+                related_subscription = LoyaltyProgramSubscriptions.objects.get(card_number=serializer.data["card_number"])
+                related_subscription_serialized = LoyaltyProgramSubscriptionsDetailsSerializer(related_subscription)
 
-            current_points = LoyaltyUserPoints.objects.get(id=serializer.data["related_user"])
-            current_points_serialized = LoyaltyUserDetailsSerializer(current_points)
-            new_points = float(current_points_serialized.data["points_accrued"]) + float(loyalty_transaction.data['points_awarded'])
+                transaction_data = {
+                    "related_program":related_subscription_serialized.data["related_loyalty_program"]["id"],
+                    "related_user":related_subscription_serialized.data["related_user"]["id"],
+                    "transaction_amount":serializer.data["transaction_amount"],
+                    "receipt_number":serializer.data["receipt_number"],
+                    "payment_mode":serializer.data["payment_mode"],
+                    "transaction_date":serializer.data["transaction_date"],
+                    "points_awarded":0.03*float(serializer.data["transaction_amount"])
+                }
 
-            LoyaltyUserPoints.objects.update_or_create(
-            id=serializer.data["related_user"], defaults={'points_accrued':new_points}
-            )
-            
-            return Response({"status":201, "data":loyalty_transaction.data}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                loyalty_transaction = LoyaltyProgramTransactionSerializer(data=transaction_data)
+                loyalty_transaction.is_valid(raise_exception=True)
+                loyalty_transaction.save()
+
+                new_points = float(related_subscription_serialized.data["points_earned"]) + float(loyalty_transaction.data['points_awarded'])
+
+                LoyaltyProgramSubscriptions.objects.update_or_create(
+                id=related_subscription_serialized.data["id"], defaults={'points_earned':new_points}
+                )
+                
+                return Response({"status":201, "data":loyalty_transaction.data}, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if transaction_type == "spend":
+            serializer = LoyaltyProgramSpendSerializer(data=request.data)
+            if serializer.is_valid():
+
+                related_subscription = LoyaltyProgramSubscriptions.objects.get(card_number=serializer.data["card_number"])
+                related_subscription_serialized = LoyaltyProgramSubscriptionsDetailsSerializer(related_subscription)
+
+                if(float(serializer.data["amount"]) > float(related_subscription_serialized.data["points_earned"])):
+                    return Response({"status":400, "error":"Insufficient LOyalty Points Balance to make Transaction"}, status=status.HTTP_400_BAD_REQUEST)
+
+                else:
+
+                    transaction_data = {
+                        "related_program":related_subscription_serialized.data["related_loyalty_program"]["id"],
+                        "related_user":related_subscription_serialized.data["related_user"]["id"],
+                        "transaction_amount":serializer.data["amount"],
+                        "receipt_number":"RECEIPT1234",
+                        "payment_mode":"POINTS",
+                        "points_awarded":0
+                    }
+
+                    loyalty_spend_transaction = LoyaltyProgramTransactionSerializer(data=transaction_data)
+                    loyalty_spend_transaction.is_valid(raise_exception=True)
+                    loyalty_spend_transaction.save()
+
+                    new_points = float(related_subscription_serialized.data["points_earned"]) - float(serializer.data["amount"])
+
+                    LoyaltyProgramSubscriptions.objects.update_or_create(
+                    id=related_subscription_serialized.data["id"], defaults={'points_earned':new_points}
+                    )
+                    
+                    return Response({"status":201, "data":loyalty_spend_transaction.data}, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

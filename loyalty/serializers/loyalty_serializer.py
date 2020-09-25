@@ -94,7 +94,7 @@ class LoyaltyProgramSubscriptionsDetailsSerializer(serializers.ModelSerializer):
     related_user    = UserShortDetailsSerializer(read_only=True)
     class Meta:
         model = LoyaltyProgramSubscriptions
-        fields = ('related_loyalty_program', 'related_user', 'status', 'card_number', 'points_earned', 'rating')
+        fields = ('id', 'related_loyalty_program', 'related_user', 'status', 'card_number', 'points_earned', 'rating')
 
 
 class LoyaltyProgramTransactionSerializer(serializers.ModelSerializer):
@@ -114,9 +114,12 @@ class LoyaltyProgramTransactionDetailsSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class LoyaltyProgramCreateSerializer(serializers.Serializer):
-    related_program     = serializers.IntegerField()
-    related_user        = serializers.IntegerField()
+    card_number         = serializers.CharField(max_length=40)
     transaction_amount  = serializers.DecimalField(max_digits=20, decimal_places=2)
     receipt_number      = serializers.CharField(max_length=25)
     payment_mode        = serializers.CharField(max_length=25)
     transaction_date    = serializers.DateField()
+
+class LoyaltyProgramSpendSerializer(serializers.Serializer):
+    card_number         = serializers.CharField(max_length=40)
+    amount  = serializers.DecimalField(max_digits=20, decimal_places=2)

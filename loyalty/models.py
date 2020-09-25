@@ -55,5 +55,5 @@ class LoyaltyProgramTransactions(models.Model):
     receipt_number      = models.CharField(max_length=250)
     points_awarded      = models.DecimalField(max_digits=20, decimal_places=2)
     payment_mode        = models.CharField(max_length=250, default="CASH")
-    transaction_date    = models.DateField(auto_now_add=False)
+    transaction_date    = models.DateField(auto_now_add=False, blank=True, null=True)
     date_added          = models.DateTimeField(auto_now_add=True)
