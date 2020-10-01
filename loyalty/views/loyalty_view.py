@@ -305,3 +305,14 @@ class LoyaltyMiniTransactionListView(APIView):
             mini_serializer = LoyaltyProgramTransactionDetailsSerializer(LoyaltyProgramTransactions.objects.filter(related_program=related_subscription_serialized.data["related_loyalty_program"]["id"]).filter(related_user=related_subscription_serialized.data["related_user"]["id"]), many=True)
             return Response({"status":200, "data":mini_serializer.data}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LoyaltyProgramTransactionDetailsList(APIView):
+    """
+    List all loyalty program 
+    """
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get(self, request, pk, format=None):
+        serializer = LoyaltyProgramTransactionDetailsSerializer(LoyaltyProgramTransactions.objects.filter(related_program=pk), many=True)
+        return Response({"status":200, "data":serializer.data}, status=status.HTTP_200_OK)
