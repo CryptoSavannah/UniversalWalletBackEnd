@@ -4,7 +4,7 @@ from rest_framework import permissions
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import Q
+from django.db.models import Q, Sum
 
 from ..models import LoyaltyUserPoints, Partnerships, LoyaltyProgram, LoyaltyProgramTransactions, LoyaltyProgramSubscriptions
 from accounts.models import User
@@ -149,7 +149,9 @@ class LoyaltyProgramSubscriptionListView(APIView):
 
     def get(self, request, format=None):
         serializer = LoyaltyProgramSubscriptionsDetailsSerializer(LoyaltyProgramSubscriptions.objects.filter(related_user=request.query_params.get("id", None)).filter(status=True), many=True)
-        return Response({"status":200, "data":serializer.data}, status=status.HTTP_200_OK)
+        total_points = LoyaltyProgramSubscriptions.objects.filter(related_user=request.query_params.get("id", None)).filter(status=True).aggregate(Sum('points_earned'))
+        print(total_points)
+        return Response({"status":200, "data":serializer.data, "total_points":total_points["points_earned__sum"]}, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
         serializer = LoyaltyProgramSubscriptionsDataSerializer(data=request.data)
