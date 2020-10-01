@@ -8,7 +8,7 @@ from django.db.models import Q
 
 from ..models import LoyaltyUserPoints, Partnerships, LoyaltyProgram, LoyaltyProgramTransactions, LoyaltyProgramSubscriptions
 from accounts.models import User
-from ..serializers.loyalty_serializer import LoyaltyUserCreateSerializer, LoyaltyUserDetailsSerializer, LoyaltyProgramCreateSerializer, PartnershipsCreateSerializer, PartnershipsDetailsSerializer, LoyaltyProgramDetailsSerializer, LoyaltyProgramCreateSerializer, LoyaltyProgramTransactionSerializer, LoyaltyProgramTransactionDetailsSerializer, LoyaltyProgramSubscriptionsDataSerializer, LoyaltyProgramSubscriptionsDetailsSerializer, LoyaltyProgramSubscriptionsCreateSerializer, LoyaltyProgramSpendSerializer, LoyaltyProgramMiniStatementSerializer
+from ..serializers.loyalty_serializer import LoyaltyUserCreateSerializer, LoyaltyUserDetailsSerializer, LoyaltyProgramCreateSerializer, PartnershipsCreateSerializer, PartnershipsDetailsSerializer, LoyaltyProgramDetailsSerializer, LoyaltyProgramTransactionCreateSerializer, LoyaltyProgramTransactionSerializer, LoyaltyProgramTransactionDetailsSerializer, LoyaltyProgramSubscriptionsDataSerializer, LoyaltyProgramSubscriptionsDetailsSerializer, LoyaltyProgramSubscriptionsCreateSerializer, LoyaltyProgramSpendSerializer, LoyaltyProgramMiniStatementSerializer
 
 class LoyaltyUserView(APIView):
     """
@@ -183,6 +183,17 @@ class LoyaltyProgramSubscriptionListView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class LoyaltyProgramTenantSubscriptionListView(APIView):
+    """
+    List all loyalty program subscriptions and create a new loyalty program subscription.
+    """
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get(self, request, format=None):
+        serializer = LoyaltyProgramSubscriptionsDetailsSerializer(LoyaltyProgramSubscriptions.objects.filter(related_loyalty_program=request.query_params.get("id", None)).filter(status=True), many=True)
+        return Response({"status":200, "data":serializer.data}, status=status.HTTP_200_OK)
+
+
 class LoyaltyProgramSubscriptionDetailView(APIView):
     """
     Actions that can be performed on a specific loyalty program subscription
@@ -217,7 +228,7 @@ class LoyaltyProgramTransactionListView(APIView):
 
         transaction_type = request.query_params.get("action", None)
         if transaction_type == "earn":
-            serializer = LoyaltyProgramCreateSerializer(data=request.data)
+            serializer = LoyaltyProgramTransactionCreateSerializer(data=request.data)
             if serializer.is_valid():
 
                 related_subscription = LoyaltyProgramSubscriptions.objects.get(card_number=serializer.data["card_number"])
