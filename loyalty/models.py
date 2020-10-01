@@ -50,7 +50,7 @@ class LoyaltyUserPoints(models.Model):
 
 class LoyaltyProgramTransactions(models.Model):
     related_program     = models.ForeignKey(LoyaltyProgram, on_delete=models.CASCADE, related_name="program_related_transactions")
-    related_user        = models.ForeignKey(LoyaltyUserPoints, on_delete=models.CASCADE, related_name="points_user")
+    related_user        = models.ForeignKey(User, on_delete=models.CASCADE, related_name="points_user")
     transaction_amount  = models.DecimalField(max_digits=20, decimal_places=2)
     receipt_number      = models.CharField(max_length=250)
     points_awarded      = models.DecimalField(max_digits=20, decimal_places=2)
