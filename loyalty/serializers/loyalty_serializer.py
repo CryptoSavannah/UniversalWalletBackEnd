@@ -123,3 +123,6 @@ class LoyaltyProgramCreateSerializer(serializers.Serializer):
 class LoyaltyProgramSpendSerializer(serializers.Serializer):
     card_number         = serializers.CharField(max_length=40)
     amount  = serializers.DecimalField(max_digits=20, decimal_places=2)
+
+class LoyaltyProgramMiniStatementSerializer(serializers.Serializer):
+    card_number         = serializers.CharField(max_length=40)

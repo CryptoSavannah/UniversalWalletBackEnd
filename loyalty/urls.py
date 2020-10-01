@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views.loyalty_view import LoyaltyUserView, LoyaltyUserSpecificView, PartnershipsListView, PartnershipsSpecificView, LoyaltyProgramListView, LoyaltyProgramSpecificView, LoyaltyProgramTransactionListView, LoyaltyProgramSubscriptionListView, LoyaltyProgramSubscriptionDetailView
+from .views.loyalty_view import LoyaltyUserView, LoyaltyUserSpecificView, PartnershipsListView, PartnershipsSpecificView, LoyaltyProgramListView, LoyaltyProgramSpecificView, LoyaltyProgramTransactionListView, LoyaltyProgramSubscriptionListView, LoyaltyProgramSubscriptionDetailView, LoyaltyMiniTransactionListView
 
 urlpatterns = [
     path('loyalty/users', LoyaltyUserView.as_view(), name="loyalty-users"),
@@ -11,4 +11,5 @@ urlpatterns = [
     path('loyalty/programs/subscriptions', LoyaltyProgramSubscriptionListView.as_view(), name="loyalty-programs-subscriptions"),
     path('loyalty/programs/subscriptions/<int:pk>', LoyaltyProgramSubscriptionDetailView.as_view(), name="loyalty-programs-subscriptions-detail"),
     path('loyalty/transactions', LoyaltyProgramTransactionListView.as_view(), name="loyalty-programs-transactions"),
+    path('loyalty/transactions/cards', LoyaltyMiniTransactionListView.as_view(), name="loyalty-programs-transactions-cards"),
 ]

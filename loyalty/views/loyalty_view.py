@@ -8,7 +8,7 @@ from django.db.models import Q
 
 from ..models import LoyaltyUserPoints, Partnerships, LoyaltyProgram, LoyaltyProgramTransactions, LoyaltyProgramSubscriptions
 from accounts.models import User
-from ..serializers.loyalty_serializer import LoyaltyUserCreateSerializer, LoyaltyUserDetailsSerializer, LoyaltyProgramCreateSerializer, PartnershipsCreateSerializer, PartnershipsDetailsSerializer, LoyaltyProgramDetailsSerializer, LoyaltyProgramCreateSerializer, LoyaltyProgramTransactionSerializer, LoyaltyProgramTransactionDetailsSerializer, LoyaltyProgramSubscriptionsDataSerializer, LoyaltyProgramSubscriptionsDetailsSerializer, LoyaltyProgramSubscriptionsCreateSerializer, LoyaltyProgramSpendSerializer
+from ..serializers.loyalty_serializer import LoyaltyUserCreateSerializer, LoyaltyUserDetailsSerializer, LoyaltyProgramCreateSerializer, PartnershipsCreateSerializer, PartnershipsDetailsSerializer, LoyaltyProgramDetailsSerializer, LoyaltyProgramCreateSerializer, LoyaltyProgramTransactionSerializer, LoyaltyProgramTransactionDetailsSerializer, LoyaltyProgramSubscriptionsDataSerializer, LoyaltyProgramSubscriptionsDetailsSerializer, LoyaltyProgramSubscriptionsCreateSerializer, LoyaltyProgramSpendSerializer, LoyaltyProgramMiniStatementSerializer
 
 class LoyaltyUserView(APIView):
     """
@@ -278,3 +278,19 @@ class LoyaltyProgramTransactionListView(APIView):
                     
                     return Response({"status":201, "data":loyalty_spend_transaction.data}, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LoyaltyMiniTransactionListView(APIView):
+
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request, format=None):
+        serializer = LoyaltyProgramMiniStatementSerializer(data=request.data)
+        if serializer.is_valid():
+
+            related_subscription = LoyaltyProgramSubscriptions.objects.get(card_number=serializer.data["card_number"])
+            related_subscription_serialized = LoyaltyProgramSubscriptionsDetailsSerializer(related_subscription)
+
+            mini_serializer = LoyaltyProgramTransactionDetailsSerializer(LoyaltyProgramTransactions.objects.filter(related_program=related_subscription_serialized.data["related_loyalty_program"]["id"]).filter(related_user=related_subscription_serialized.data["related_user"]["id"]), many=True)
+            return Response({"status":200, "data":mini_serializer.data}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
