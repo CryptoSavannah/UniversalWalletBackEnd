@@ -3,8 +3,8 @@ from ..models import Otp
 from ..serializers.user_serializer import OtpSerializer
 from twilio.rest import Client 
 
-account_sid = 'ACb8f3027fa07c3ffe6878e909433299b3' 
-auth_token = '2f9e31d6ff434826baa59897deafd946' 
+account_sid = #
+auth_token = # 
 client = Client(account_sid, auth_token)
 
 def generate_otp():
