@@ -97,11 +97,11 @@ class LoyaltyProgramListView(APIView):
     """
     permission_classes = (permissions.IsAuthenticated, )
 
-    def get(self, request, format=None):
-        serializer = LoyaltyProgramDetailsSerializer(LoyaltyProgram.objects.filter(status=True), many=True)
+    def get(self, request, pk, format=None):
+        serializer = LoyaltyProgramDetailsSerializer(LoyaltyProgram.objects.filter(related_tenant=pk).filter(status=True), many=True)
         return Response({"status":200, "data":serializer.data}, status=status.HTTP_200_OK)
 
-    def post(self, request, format=None):
+    def post(self, request, pk, format=None):
         serializer = LoyaltyProgramCreateSerializer(data=request.data)
         if serializer.is_valid():
             
