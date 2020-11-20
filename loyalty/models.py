@@ -30,6 +30,20 @@ class LoyaltyProgram(models.Model):
     status              = models.BooleanField(default=True)
     date_added          = models.DateTimeField(auto_now_add=True)
 
+class LoyaltyProgramBranches(models.Model):
+    related_loyalty_program = models.ForeignKey(LoyaltyProgram, on_delete=models.CASCADE, related_name="branch_related_loyalty_program")
+    branch_name             =  models.CharField(max_length=250)
+    branch_location         =  models.CharField(max_length=250)
+    status                  =  models.BooleanField(default=False)
+    date_added              =  models.DateTimeField(auto_now_add=True)
+
+class LoyaltyProgramBalanceLoads(models.Model):
+    related_loyalty_program =  models.ForeignKey(LoyaltyProgram, on_delete=models.CASCADE, related_name="balance_related_loyalty_program")
+    amount                  =  models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)
+    status                  =  models.BooleanField(default=False)
+    date_loaded             =  models.DateTimeField(auto_now_add=True)
+
+
 class LoyaltyProgramSubscriptions(models.Model):
     related_loyalty_program =   models.ForeignKey(LoyaltyProgram, on_delete=models.CASCADE, related_name="program_related")
     related_user            =   models.ForeignKey(User, on_delete=models.CASCADE, related_name="related_user")
@@ -51,6 +65,7 @@ class LoyaltyUserPoints(models.Model):
 class LoyaltyProgramTransactions(models.Model):
     related_program     = models.ForeignKey(LoyaltyProgram, on_delete=models.CASCADE, related_name="program_related_transactions")
     related_user        = models.ForeignKey(User, on_delete=models.CASCADE, related_name="points_user")
+    related_branch      = models.ForeignKey(LoyaltyProgramBranches, on_delete=models.CASCADE, related_name="branch_transactions", null=True, blank=True)
     transaction_amount  = models.DecimalField(max_digits=20, decimal_places=2)
     receipt_number      = models.CharField(max_length=250)
     points_awarded      = models.DecimalField(max_digits=20, decimal_places=2)
