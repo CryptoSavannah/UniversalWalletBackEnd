@@ -89,7 +89,7 @@ class UserListView(APIView):
                 send_otp(user_data_serialized.data['id'], phone_number, user_data_serialized.data["first_name"])
                 return Response({"status":201, "data":user_data_serialized.data}, status=status.HTTP_201_CREATED)
             except:
-                return Response({"status":500, "error":"Something only I can explain happened"})
+                return Response({"status":500, "error":"User account already exists, Please use another username"})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
