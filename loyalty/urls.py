@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views.loyalty_view import LoyaltyUserView, LoyaltyUserSpecificView, PartnershipsListView, PartnershipsSpecificView, LoyaltyProgramListView, LoyaltyProgramSpecificView, LoyaltyProgramTransactionListView, LoyaltyProgramSubscriptionListView, LoyaltyProgramSubscriptionDetailView, LoyaltyMiniTransactionListView, LoyaltyProgramTenantSubscriptionListView, LoyaltyProgramTransactionDetailsList
+from .views.loyalty_view import LoyaltyUserView, LoyaltyUserSpecificView, PartnershipsListView, PartnershipsSpecificView, LoyaltyProgramListView, LoyaltyProgramSpecificView, LoyaltyProgramTransactionListView, LoyaltyProgramSubscriptionListView, LoyaltyProgramSubscriptionDetailView, LoyaltyMiniTransactionListView, LoyaltyProgramTenantSubscriptionListView, LoyaltyProgramTransactionDetailsList, LoyaltyProgramBalanceListView, LoyaltyProgramBranchListView
 
 urlpatterns = [
     path('loyalty/users', LoyaltyUserView.as_view(), name="loyalty-users"),
@@ -7,6 +7,8 @@ urlpatterns = [
     path('loyalty/partnerships', PartnershipsListView.as_view(), name="loyalty-partnerships"),
     path('loyalty/partnerships/<int:pk>', PartnershipsSpecificView.as_view(), name="loyalty-partnerships-detail"),
     path('loyalty/<int:pk>/programs', LoyaltyProgramListView.as_view(), name="loyalty-programs"),
+    path('loyalty/<int:pk>/programs/branches', LoyaltyProgramBranchListView.as_view(), name="loyalty-programs-branches"),
+    path('loyalty/<int:pk>/programs/balances', LoyaltyProgramBalanceListView.as_view(), name="loyalty-programs-balances"),
     path('loyalty/programs/<int:pk>', LoyaltyProgramSpecificView.as_view(), name="loyalty-program-specific"),
     path('loyalty/programs/subscriptions', LoyaltyProgramSubscriptionListView.as_view(), name="loyalty-programs-subscriptions"),
     path('tenant/loyalty/programs/subscriptions', LoyaltyProgramTenantSubscriptionListView.as_view(), name="loyalty-programs-subscriptions-tenant"),
