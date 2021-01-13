@@ -8,7 +8,7 @@ auth_token = '2f9e31d6ff434826baa59897deafd946'
 client = Client(account_sid, auth_token)
 
 def generate_otp():
-    return random.randint(0000, 9999)
+    return random.randint(1000, 9999)
 
 def send_otp(user, phone_number, first_name):
     otp_code = generate_otp()
