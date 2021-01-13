@@ -6,9 +6,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import Q, Sum
 
-from ..models import LoyaltyUserPoints, Partnerships, LoyaltyProgram, LoyaltyProgramTransactions, LoyaltyProgramSubscriptions
+from ..models import LoyaltyUserPoints, Partnerships, LoyaltyProgram, LoyaltyProgramTransactions, LoyaltyProgramSubscriptions, LoyaltyProgramBranches, LoyaltyProgramBalanceLoads
 from accounts.models import User
-from ..serializers.loyalty_serializer import LoyaltyUserCreateSerializer, LoyaltyUserDetailsSerializer, LoyaltyProgramCreateSerializer, PartnershipsCreateSerializer, PartnershipsDetailsSerializer, LoyaltyProgramDetailsSerializer, LoyaltyProgramTransactionCreateSerializer, LoyaltyProgramTransactionSerializer, LoyaltyProgramTransactionDetailsSerializer, LoyaltyProgramSubscriptionsDataSerializer, LoyaltyProgramSubscriptionsDetailsSerializer, LoyaltyProgramSubscriptionsCreateSerializer, LoyaltyProgramSpendSerializer, LoyaltyProgramMiniStatementSerializer
+from ..serializers.loyalty_serializer import LoyaltyUserCreateSerializer, LoyaltyUserDetailsSerializer, LoyaltyProgramCreateSerializer, PartnershipsCreateSerializer, PartnershipsDetailsSerializer, LoyaltyProgramDetailsSerializer, LoyaltyProgramTransactionCreateSerializer, LoyaltyProgramTransactionSerializer, LoyaltyProgramTransactionDetailsSerializer, LoyaltyProgramSubscriptionsDataSerializer, LoyaltyProgramSubscriptionsDetailsSerializer, LoyaltyProgramSubscriptionsCreateSerializer, LoyaltyProgramSpendSerializer, LoyaltyProgramMiniStatementSerializer, LoyaltyProgramBranchCreateSerializer, LoyaltyProgramBranchDetailsSerializer, LoyaltyProgramBalanceCreateSerializer, LoyaltyProgramBalanceDetailsSerializer
 
 class LoyaltyUserView(APIView):
     """
@@ -138,6 +138,45 @@ class LoyaltyProgramSpecificView(APIView):
             id=pk, defaults={'status':False}
         )
         return Response({"status":200, "data":"Successfull"}, status=status.HTTP_200_OK)
+
+
+class LoyaltyProgramBranchListView(APIView):
+    """
+    List all loyalty program branches and create a new loyalty program branch.
+    """
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get(self, request, pk, format=None):
+        serializer = LoyaltyProgramBranchDetailsSerializer(LoyaltyProgramBranches.objects.filter(related_loyalty_program=pk).filter(status=True), many=True)
+        return Response({"status":200, "data":serializer.data}, status=status.HTTP_200_OK)
+
+    def post(self, request, pk, format=None):
+        serializer = LoyaltyProgramBranchCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            
+            serializer.save()
+            return Response({"status":201, "data":serializer.data}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class LoyaltyProgramBalanceListView(APIView):
+    """
+    List all loyalty program branches and create a new loyalty program branch.
+    """
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get(self, request, pk, format=None):
+        serializer = LoyaltyProgramBalanceDetailsSerializer(LoyaltyProgramBalanceLoads.objects.filter(related_loyalty_program=pk).filter(status=True), many=True)
+        return Response({"status":200, "data":serializer.data}, status=status.HTTP_200_OK)
+
+    def post(self, request, pk, format=None):
+        serializer = LoyaltyProgramBalanceCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            
+            serializer.save(status=True)
+            return Response({"status":201, "data":serializer.data}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 

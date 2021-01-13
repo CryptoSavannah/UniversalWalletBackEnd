@@ -25,6 +25,7 @@ class LoyaltyProgram(models.Model):
     program_partner     = models.ForeignKey(Partnerships, on_delete=models.CASCADE, related_name="program_partner", blank=True, null=True)
     program_percentage  = models.DecimalField(max_digits=20, decimal_places=2)
     partner_percentage  = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)
+    balance             = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)
     start_date          = models.DateField(auto_now_add=False, blank=True, null=True)
     due_date            = models.DateField(auto_now_add=False, blank=True, null=True)
     status              = models.BooleanField(default=True)
@@ -34,7 +35,7 @@ class LoyaltyProgramBranches(models.Model):
     related_loyalty_program = models.ForeignKey(LoyaltyProgram, on_delete=models.CASCADE, related_name="branch_related_loyalty_program")
     branch_name             =  models.CharField(max_length=250)
     branch_location         =  models.CharField(max_length=250)
-    status                  =  models.BooleanField(default=False)
+    status                  =  models.BooleanField(default=True)
     date_added              =  models.DateTimeField(auto_now_add=True)
 
 class LoyaltyProgramBalanceLoads(models.Model):
