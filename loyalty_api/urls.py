@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/accounts/', include('accounts.urls'), name="accounts-routes"),
     path('api/v1/', include('loyalty.urls'), name="loyalty-routes"),
+    path('api/v1/', include('binusu.urls'), name="binusu-routes")
 ]

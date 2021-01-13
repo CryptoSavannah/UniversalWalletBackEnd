@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from accounts.serializers.user_serializer import UserShortDetailsSerializer
-from ..models import LoyaltyUserPoints, Partnerships, LoyaltyProgram, LoyaltyProgramTransactions, LoyaltyTenants, LoyaltyProgramSubscriptions
+from ..models import LoyaltyUserPoints, Partnerships, LoyaltyProgram, LoyaltyProgramTransactions, LoyaltyTenants, LoyaltyProgramSubscriptions, LoyaltyProgramBranches, LoyaltyProgramBalanceLoads
 
 
 class LoyaltyTenantsCreateSerializer(serializers.ModelSerializer):
@@ -18,6 +18,39 @@ class LoyaltyTenantsDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = LoyaltyTenants
         fields = '__all__'
+
+class LoyaltyProgramBranchCreateSerializer(serializers.ModelSerializer):
+    """
+    Model Serializer for creating program branches
+    """
+    class Meta:
+        model = LoyaltyProgramBranches
+        fields = ('related_loyalty_program', 'branch_name', 'branch_location')
+
+class LoyaltyProgramBranchDetailsSerializer(serializers.ModelSerializer):
+    """
+    Model Serializer for loyalty branch details
+    """
+    class Meta:
+        model = LoyaltyProgramBranches
+        fields = '__all__'
+
+class LoyaltyProgramBalanceCreateSerializer(serializers.ModelSerializer):
+    """
+    Model Serializer for adding Loyalty program balances
+    """
+    class Meta:
+        model = LoyaltyProgramBalanceLoads
+        fields = ('related_loyalty_program', 'amount')
+
+class LoyaltyProgramBalanceDetailsSerializer(serializers.ModelSerializer):
+    """
+    Model Serializer for program balance details
+    """
+    class Meta:
+        model = LoyaltyProgramBalanceLoads
+        fields = '__all__'
+
 
 class LoyaltyUserCreateSerializer(serializers.ModelSerializer):
     """
