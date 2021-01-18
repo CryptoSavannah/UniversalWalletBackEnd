@@ -9,6 +9,7 @@ from ..serializers.serializers import KycSerializer, KycConfirmSerializer, Order
 
 from ..helpers.helpers import get_random_alphanumeric_string
 from ..helpers.email_handler import send_order_email, buy_email, client_email, sell_email, client_sell_email
+from ..helpers.telegram_handler import send_telegram, telegram_buy_message, telegram_sell_message
 
 class KycListView(APIView):
     """
@@ -72,31 +73,35 @@ class OrdersView(APIView):
                 order_serializer.is_valid(raise_exception=True)
                 order_serializer.save()
 
-                message = buy_email(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_serializer.data["order_amount_fiat"], order_serializer.data["crypto_unit_price"])
-
-                client_message = client_email(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_serializer.data["order_amount_fiat"], order_serializer.data["crypto_unit_price"])
-
                 if(order_serializer.data["order_type"]=="BUY"):
                     message = buy_email(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_serializer.data["order_amount_fiat"], order_serializer.data["crypto_unit_price"])
 
                     client_message = client_email(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_serializer.data["order_amount_fiat"], order_serializer.data["crypto_unit_price"])
+
+                    telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_serializer.data["order_amount_fiat"], order_serializer.data["crypto_unit_price"])
 
                     send_order_email("Crypto Buy Order", message, "brian.t@savannah.ug")
 
                     send_order_email("Crypto Buy Order", message, "arinrony@gmail.com")
 
                     send_order_email("Cryptocurreny Purchase order from Binusu", client_message, user.email_address)
+
+                    send_telegram(telegram_message)
                 
                 else:
                     message = sell_email(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_serializer.data["order_amount_fiat"], order_serializer.data["crypto_unit_price"])
 
                     client_message = client_sell_email(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_serializer.data["order_amount_fiat"], order_serializer.data["crypto_unit_price"])
 
+                    telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_serializer.data["order_amount_fiat"], order_serializer.data["crypto_unit_price"])
+
                     send_order_email("Crypto Sell Order", message, "brian.t@savannah.ug")
 
                     send_order_email("Crypto Sell Order", message, "arinrony@gmail.com")
 
                     send_order_email("Cryptocurreny Sell order from Binusu", client_message, user.email_address)
+
+                    send_telegram(telegram_message)
 
 
                 return Response({"status":201, "data":order_serializer.data}, status=status.HTTP_201_CREATED)
