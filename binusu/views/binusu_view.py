@@ -8,7 +8,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from ..serializers.serializers import KycSerializer, KycConfirmSerializer, OrdersSerializer, EmailLogsSerializer, TelegramLogsSerializer, OrderReceiverSerializer, KycUserSerializer
 
 from ..helpers.helpers import get_random_alphanumeric_string
-from ..helpers.email_handler import send_order_email, buy_email, client_email, sell_email, client_sell_email
+from ..helpers.email_handler import send_order_email, buy_email, client_email, sell_email, client_sell_email, sign_up_email
 from ..helpers.telegram_handler import send_telegram, telegram_buy_message, telegram_sell_message
 
 class KycListView(APIView):
@@ -25,6 +25,10 @@ class KycListView(APIView):
                 return Response({"status":400, "error": "User already exists proceed to login"}, status=status.HTTP_400_BAD_REQUEST)
             except:
                 serializer.save()
+
+                welcome_email = sign_up_email(serializer.data["first_name"])
+                send_order_email("Welcome to Binusu", welcome_email, serializer.data["email_address"])
+
                 return Response({"status":201, "data":serializer.data}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
