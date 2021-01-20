@@ -25,6 +25,10 @@ class KycListView(APIView):
                 return Response({"status":400, "error": "User already exists proceed to login"}, status=status.HTTP_400_BAD_REQUEST)
             except:
                 serializer.save()
+
+                welcome_email = sign_up_email(serializer.data["first_name"])
+                send_order_email("Welcome to Binusu", welcome_email, serializer.data["email_address"])
+
                 return Response({"status":201, "data":serializer.data}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         

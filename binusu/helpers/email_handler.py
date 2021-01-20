@@ -18,3 +18,7 @@ def client_sell_email(order_number, order_type, crypto_type, fiat_type, order_am
 
 def sign_up_email(first_name):
     return "Hey {} \n Welcome to binusu.com. You can now proceed to transact in crypto. Supported coins are BTC, ETH, LTC, XRP. Please reach out to support@binusu.com for further details"
+
+
+def order_confirm_email():
+    pass
