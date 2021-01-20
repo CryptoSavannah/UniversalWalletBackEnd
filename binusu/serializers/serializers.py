@@ -7,7 +7,7 @@ class KycSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Kyc
-        fields = ('id', 'first_name', 'last_name' ,'phone_number', 'email_address', 'password','nin_number', 'id_front', 'id_back', 'selfie_photo', 'date_submitted')
+        fields = ('id', 'first_name', 'last_name' ,'phone_number', 'email_address', 'password','nin_number', 'date_submitted')
 
 class KycUserSerializer(serializers.ModelSerializer):
     """

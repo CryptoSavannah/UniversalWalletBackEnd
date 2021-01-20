@@ -15,7 +15,7 @@ class KycListView(APIView):
     """
     List all kyc and create a new kyc object
     """
-    parser_classes = (MultiPartParser, FormParser)
+    # parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request, format=None):
         serializer = KycSerializer(data=request.data)
