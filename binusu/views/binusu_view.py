@@ -45,6 +45,8 @@ class ConfirmKyc(APIView):
                 if(str(user.password) == serializer.data["password"]):
                     user_serializer = KycUserSerializer(user)
                     return Response({"status":200, "data": user_serializer.data}, status=status.HTTP_200_OK)
+                else:
+                    return Response({"status":404, "error":"Invalid username or password"})
             except:
                 return Response({"status": 404, "error":"User with email not found"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
