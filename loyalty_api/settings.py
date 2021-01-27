@@ -184,9 +184,3 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'default from email'
-
-EMAIL_HOST_USER = 'kapsonkatongole@gmail.com'
-EMAIL_HOST_PASSWORD = 'pdtedbdslcnfozki'
-
-TELEGRAM_TOKEN='1582155200:AAGHD8YRWByf2tVQ5XuobMOVX9KUH1gmdzA'
-TELEGRAM_GROUP_ID='-1001332428147'

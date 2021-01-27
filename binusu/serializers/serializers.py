@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from ..models import Kyc, Orders, EmailLogs, TelegramLogs
+from ..models import Kyc, Orders, EmailLogs, TelegramLogs, PasswordResets
+
 
 class KycSerializer(serializers.ModelSerializer):
     """
@@ -22,7 +23,19 @@ class KycConfirmSerializer(serializers.Serializer):
     Serializer for kyc confirmation
     """
     email_address   = serializers.CharField(max_length=250)
-    password        = serializers.CharField(max_length=10)
+    password        = serializers.CharField(max_length=250)
+
+class PasswordResetSerializer(serializers.Serializer):
+    email_address = serializers.CharField(max_length=250)
+
+class PasswordResetCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PasswordResets
+        fields = ('related_account', 'reset_token')
+
+class PasswordConfirmSerializer(serializers.Serializer):
+    token           =   serializers.CharField(max_length=250)
+    new_password    =   serializers.CharField(max_length=250)
 
 class OrderReceiverSerializer(serializers.Serializer):
     """
@@ -59,4 +72,4 @@ class TelegramLogsSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = TelegramLogs
-        fields = ('releated_order_telegram', 'telegeam_message', 'status', 'date_dispatched')
+        fields = ('related_order_telegram', 'telegeam_message', 'status', 'date_dispatched')
