@@ -12,7 +12,18 @@ class Kyc(models.Model):
     id_front        = models.FileField(upload_to='kyc/', null=True, blank=True)
     id_back         = models.FileField(upload_to='kyc/', null=True, blank=True)
     selfie_photo    = models.FileField(upload_to='kyc/', null=True, blank=True)
+    active          = models.BooleanField(default=False)
+    activated_on    = models.DateTimeField(auto_now_add=False, null=True, blank=True)
     date_submitted  = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return "Kyc for {} {} {}".format(self.first_name, self.last_name, self.email_address)
+
+class PasswordResets(models.Model):
+    related_account =   models.ForeignKey(Kyc, on_delete=models.CASCADE, related_name="reset_related_account")
+    reset_token     =   models.CharField(max_length=250)
+    reset_used      =   models.BooleanField(default=False)
+    date_requested  =   models.DateTimeField(auto_now_add=True)
 
 class Orders(models.Model):
     order_number    = models.CharField(max_length=250)
