@@ -26,8 +26,7 @@ class KycListView(APIView):
                 existing_user = Kyc.objects.get(email_address=serializer.validated_data["email_address"])
                 return Response({"status":400, "error": "User already exists proceed to login"}, status=status.HTTP_400_BAD_REQUEST)
             except:
-                password = hashlib.sha256(serializer.data["password"].encode('utf-8')).hexdigest()
-
+                serializer.save()
 
                 welcome_email = sign_up_email(serializer.data["first_name"])
                 send_order_email("Welcome to Binusu", welcome_email, serializer.data["email_address"])
@@ -129,7 +128,7 @@ class ResetPassword(APIView):
             try:
                 user = Kyc.objects.get(email_address=serializer.data["email_address"])
                 user_serialized = KycUserSerializer(user)
-                reset_token = hashlib.sha256(user.email_address.encode('utf-8')).hexdigest()
+                reset_token = hashlib.sha256(user.email_address.encode('utf-8')+get_random_alphanumeric_string(6).encode('utf-8')).hexdigest()
                 reset_data = {
                     'related_account':user_serialized.data["id"],
                     'reset_token': reset_token
@@ -154,16 +153,22 @@ class ConfirmPasswordReset(APIView):
     def post(self, request, format=None):
         serializer = PasswordConfirmSerializer(data=request.data)
         if serializer.is_valid():
-            reset_token = hashlib.sha256(serializer.data['email_address'].encode('utf-8')).hexdigest()
-            if(str(reset_token)==str(serializer.data['token'])):
-                try:
-                    user = Kyc.objects.get(email_address=serializer.data["email_address"])
+            try:
+                related_reset = PasswordResets.objects.get(reset_token=serializer.data["token"])
+                if(related_reset.reset_used==False):
+                
+                    user = Kyc.objects.get(id=related_reset.related_account.id)
 
                     Kyc.objects.update_or_create(
                     id=user.id, defaults={'password':serializer.data['new_password']}
                     )
 
+                    PasswordResets.objects.update_or_create(
+                        id=related_reset.id, defaults={'reset_used':True}
+                    )
+
                     return Response({"status":200, "message":"Success, Password reset successfully"}, status=status.HTTP_200_OK)
-                except:
-                    return Response({"status":404, "error":"User doesnt have valid KYC"}, status=status.HTTP_201_CREATED)
+                return Response({"status":404, "error": "Reset token already used"})
+            except:
+                return Response({"status":404, "error":"User doesnt have valid KYC"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

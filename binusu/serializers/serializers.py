@@ -34,7 +34,6 @@ class PasswordResetCreateSerializer(serializers.ModelSerializer):
         fields = ('related_account', 'reset_token')
 
 class PasswordConfirmSerializer(serializers.Serializer):
-    email_address   =   serializers.CharField(max_length=250)
     token           =   serializers.CharField(max_length=250)
     new_password    =   serializers.CharField(max_length=250)
 
@@ -73,4 +72,4 @@ class TelegramLogsSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = TelegramLogs
-        fields = ('releated_order_telegram', 'telegeam_message', 'status', 'date_dispatched')
+        fields = ('related_order_telegram', 'telegeam_message', 'status', 'date_dispatched')

@@ -22,7 +22,7 @@ def order_confirm_email():
     pass
 
 def password_reset_email(first_name, token):
-    return "Hey {} Please use this link to reset your password https://binusu.com/new-password.html?token={}. \n Please Ignore this message if you did not request a password reset".format(first_name, token)
+    return "Hey {} Please use this link to reset your password https://cryptosavannah.github.io/BINUSU/template_v1.2/new-password.html?token={}. \n Please Ignore this message if you did not request a password reset".format(first_name, token)
 
 def password_reset_404_email(email):
     return "We received a request to reset the password to access Binusu OTC with your email address {} from a {{operating_system}} device using {{browser_name}}, but we were unable to find an account associated with this address. If you use Binusu OTC and were expecting this email, consider trying to request a password reset using the email address associated with your account.".format(email)
