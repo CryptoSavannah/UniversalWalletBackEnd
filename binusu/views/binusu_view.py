@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 
-from ..serializers.serializers import KycSerializer, KycConfirmSerializer, OrdersSerializer, EmailLogsSerializer, TelegramLogsSerializer, OrderReceiverSerializer, KycUserSerializer, PasswordResetSerializer, PasswordResetCreateSerializer
+from ..serializers.serializers import KycSerializer, KycConfirmSerializer, OrdersSerializer, EmailLogsSerializer, TelegramLogsSerializer, OrderReceiverSerializer, KycUserSerializer, PasswordResetSerializer, PasswordResetCreateSerializer, PasswordConfirmSerializer
 
 from ..helpers.helpers import get_random_alphanumeric_string
 from ..helpers.email_handler import buy_email, client_email, sell_email, client_sell_email, sign_up_email, password_reset_email, password_reset_404_email
@@ -152,6 +152,18 @@ class ResetPassword(APIView):
 
 class ConfirmPasswordReset(APIView):
     def post(self, request, format=None):
-        serializer = PasswordResetSerializer(data=request.data)
+        serializer = PasswordConfirmSerializer(data=request.data)
         if serializer.is_valid():
-            pass
+            reset_token = hashlib.sha256(serializer.data['email_address'].encode('utf-8')).hexdigest()
+            if(str(reset_token)==str(serializer.data['token'])):
+                try:
+                    user = Kyc.objects.get(email_address=serializer.data["email_address"])
+
+                    Kyc.objects.update_or_create(
+                    id=user.id, defaults={'password':serializer.data['new_password']}
+                    )
+
+                    return Response({"status":200, "message":"Success, Password reset successfully"}, status=status.HTTP_200_OK)
+                except:
+                    return Response({"status":404, "error":"User doesnt have valid KYC"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

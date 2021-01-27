@@ -23,7 +23,7 @@ class KycConfirmSerializer(serializers.Serializer):
     Serializer for kyc confirmation
     """
     email_address   = serializers.CharField(max_length=250)
-    password        = serializers.CharField(max_length=10)
+    password        = serializers.CharField(max_length=250)
 
 class PasswordResetSerializer(serializers.Serializer):
     email_address = serializers.CharField(max_length=250)
