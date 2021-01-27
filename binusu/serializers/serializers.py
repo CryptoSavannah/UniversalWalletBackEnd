@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from ..models import Kyc, Orders, EmailLogs, TelegramLogs
+from ..models import Kyc, Orders, EmailLogs, TelegramLogs, PasswordResets
+
 
 class KycSerializer(serializers.ModelSerializer):
     """
@@ -23,6 +24,19 @@ class KycConfirmSerializer(serializers.Serializer):
     """
     email_address   = serializers.CharField(max_length=250)
     password        = serializers.CharField(max_length=10)
+
+class PasswordResetSerializer(serializers.Serializer):
+    email_address = serializers.CharField(max_length=250)
+
+class PasswordResetCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PasswordResets
+        fields = ('related_account', 'reset_token')
+
+class PasswordConfirmSerializer(serializers.Serializer):
+    email_address   =   serializers.CharField(max_length=250)
+    token           =   serializers.CharField(max_length=250)
+    new_password    =   serializers.CharField(max_length=250)
 
 class OrderReceiverSerializer(serializers.Serializer):
     """
