@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'yc=n&m4mb+y!k33+i8lz70p4p)!0g-zjnth@unnf7n=3dz#)_)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['mc1.cryptosavannah.com']
 

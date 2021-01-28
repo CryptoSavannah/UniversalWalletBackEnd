@@ -12,6 +12,7 @@ from ..helpers.helpers import get_random_alphanumeric_string
 from ..helpers.email_handler import buy_email, client_email, sell_email, client_sell_email, sign_up_email, password_reset_email, password_reset_404_email
 from ..helpers.telegram_handler import send_telegram, telegram_buy_message, telegram_sell_message
 from ..helpers.baluwa import send_order_email
+from ..helpers.rates import get_rates
 
 class KycListView(APIView):
     """
@@ -112,7 +113,7 @@ class OrdersView(APIView):
                     send_telegram(telegram_message)
                 return Response({"status":201, "data":order_serializer.data}, status=status.HTTP_201_CREATED)
             except:
-                return Response({"status":404, "error":"User doesnt have valid KYC"}, status=status.HTTP_201_CREATED)
+                return Response({"status":404, "error":"User doesnt have valid KYC"}, status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -168,5 +169,28 @@ class ConfirmPasswordReset(APIView):
                     return Response({"status":200, "message":"Success, Password reset successfully"}, status=status.HTTP_200_OK)
                 return Response({"status":404, "error": "Reset token already used"})
             except:
-                return Response({"status":404, "error":"User doesnt have valid KYC"}, status=status.HTTP_201_CREATED)
+                return Response({"status":404, "error":"User doesnt have valid KYC"}, status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetCurrentRates(APIView):
+    def get(self, request, format=None):
+        try:
+            rates_call = get_rates()
+            rates_data = {
+                "BTC":{
+                    "BUY":rates_call[0]['Buy'],
+                    "SELL":rates_call[0]['Sell']
+                },
+                "ETH":{
+                    "BUY":rates_call[2]['Buy'],
+                    "SELL":rates_call[2]['Sell']
+                },
+                "CELO":{
+                    "BUY":rates_call[8]['Buy'],
+                    "SELL":rates_call[8]['Sell']
+                }
+            }
+            return Response({"status":200, "data":rates_data})
+        except:
+             return Response({"status":404, "error":"Rates currently unavailable"}, status=status.HTTP_404_NOT_FOUND)
