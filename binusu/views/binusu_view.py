@@ -93,7 +93,7 @@ class OrdersView(APIView):
 
                     telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated)
 
-                    send_order_email("Crypto Buy Order", message, "kapsonkatongole@gmail.com")
+                    send_order_email("Crypto Buy Order", message, "brian.t@savannah.ug")
 
                     send_order_email("Crypto Buy Order", message, "arinrony@gmail.com")
 
@@ -193,8 +193,12 @@ class GetCurrentRates(APIView):
                     "SELL":rates_call[2]['Sell']
                 },
                 "CELO":{
-                    "BUY":rates_call[8]['Buy'],
-                    "SELL":rates_call[8]['Sell']
+                    "BUY":rates_call[9]['Buy'],
+                    "SELL":rates_call[9]['Sell']
+                },
+                "cUSD":{
+                    "BUY":rates_call[4]['Buy'],
+                    "SELL":rates_call[4]['Sell']
                 }
             }
             return Response({"status":200, "data":rates_data})
