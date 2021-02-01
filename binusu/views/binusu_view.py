@@ -82,14 +82,18 @@ class OrdersView(APIView):
                 order_serializer.is_valid(raise_exception=True)
                 order_serializer.save()
 
+                order_amount_formated = "{:0,.2f}".format(float(order_serializer.data["order_amount_fiat"]))
+                crypto_unit_formated = "{:0,.2f}".format(float(order_serializer.data["crypto_unit_price"]))
+
                 if(order_serializer.data["order_type"]=="BUY"):
-                    message = buy_email(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_serializer.data["order_amount_fiat"], order_serializer.data["crypto_unit_price"])
 
-                    client_message = client_email(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_serializer.data["order_amount_fiat"], order_serializer.data["crypto_unit_price"])
+                    message = buy_email(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated, user.email_address, user.phone_number)
 
-                    telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_serializer.data["order_amount_fiat"], order_serializer.data["crypto_unit_price"])
+                    client_message = client_email(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated)
 
-                    send_order_email("Crypto Buy Order", message, "brian.t@savannah.ug")
+                    telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated)
+
+                    send_order_email("Crypto Buy Order", message, "kapsonkatongole@gmail.com")
 
                     send_order_email("Crypto Buy Order", message, "arinrony@gmail.com")
 
@@ -98,11 +102,11 @@ class OrdersView(APIView):
                     send_telegram(telegram_message)
                 
                 else:
-                    message = sell_email(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_serializer.data["order_amount_fiat"], order_serializer.data["crypto_unit_price"])
+                    message = sell_email(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated)
 
-                    client_message = client_sell_email(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_serializer.data["order_amount_fiat"], order_serializer.data["crypto_unit_price"])
+                    client_message = client_sell_email(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated)
 
-                    telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_serializer.data["order_amount_fiat"], order_serializer.data["crypto_unit_price"])
+                    telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated)
 
                     send_order_email("Crypto Sell Order", message, "brian.t@savannah.ug")
 
