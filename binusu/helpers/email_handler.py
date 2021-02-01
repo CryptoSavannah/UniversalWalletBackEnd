@@ -16,7 +16,7 @@ def client_sell_email(order_number, order_type, crypto_type, fiat_type, order_am
     return "Order No. {}, type: {}, of crypto {}{} for {}{} at market price of {} per {} confirmed. Please hold on as one of our agents contacts you.".format(order_number, order_type, order_amount_crypto, crypto_type, order_amount_fiat, fiat_type, crypto_unit_price, crypto_type)
 
 def sign_up_email(first_name):
-    return "Hey {} \n Welcome to binusu.com. You can now proceed to transact in crypto. Supported coins are BTC, ETH, LTC, XRP. Please reach out to support@binusu.com for further details"
+    return "Hey {} \n Welcome to binusu.com. You can now proceed to transact in crypto. Supported coins are BTC, ETH, CELO, cUSD. Please reach out to support@binusu.com for further details"
 
 def order_confirm_email():
     pass
