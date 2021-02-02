@@ -10,7 +10,7 @@ from ..serializers.serializers import KycSerializer, KycConfirmSerializer, Order
 
 from ..helpers.helpers import get_random_alphanumeric_string
 from ..helpers.email_handler import EmailFormatter, PersonalEmailFormatter
-from ..helpers.telegram_handler import send_telegram, telegram_buy_message, telegram_sell_message
+from ..helpers.telegram_handler import send_telegram, telegram_buy_message, telegram_sell_message, send_error_telegram, telegram_error_message
 from ..helpers.baluwa import send_order_email
 from ..helpers.rates import get_rates
 
@@ -32,11 +32,17 @@ class KycListView(APIView):
                 existing_user = Kyc.objects.get(email_address=serializer.validated_data["email_address"])
                 return Response({"status":400, "error": "User already exists proceed to login"}, status=status.HTTP_400_BAD_REQUEST)
             except:
-                serializer.save()
+                try:
+                    serializer.save()
 
-                PersonalEmail = PersonalEmailFormatter(serializer.data["first_name"])
-                welcome_email = PersonalEmail.sign_up_email()
-                send_order_email("Welcome to Binusu", welcome_email, serializer.data["email_address"])
+                    PersonalEmail = PersonalEmailFormatter(serializer.data["first_name"])
+                    welcome_email = PersonalEmail.sign_up_email()
+
+                    send_order_email("Welcome to Binusu", welcome_email, serializer.data["email_address"])
+
+                except Exception as e:
+                    send_error_telegram(e)
+                    return Response({"status":424, "error":"Service Unavailable due to failed dependency"}, status=status.HTTP_424_FAILED_DEPENDENCY)
 
                 return Response({"status":201, "data":serializer.data}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -77,7 +83,7 @@ class OrdersView(APIView):
                 user = Kyc.objects.get(id=int(serializer.data['related_kyc']))
                 
                 order_data = {
-                    "order_number": "{}{}".format("BN", get_random_alphanumeric_string(10)),
+                    "order_number": "{}".format(get_random_alphanumeric_string(10)),
                     "related_kyc": serializer.data['related_kyc'],
                     "order_type": serializer.data['order_type'],
                     "crypto_type": serializer.data['crypto_type'],
@@ -106,13 +112,18 @@ class OrdersView(APIView):
 
                     telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated)
 
-                    send_order_email("Crypto Buy Order", message, "brian.t@savannah.ug")
+                    try:
+                        send_order_email("Crypto Buy Order", message, "brian.t@savannah.ug")
 
-                    send_order_email("Crypto Buy Order", message, "arinrony@gmail.com")
+                        send_order_email("Crypto Buy Order", message, "arinrony@gmail.com")
 
-                    send_order_email("Cryptocurreny Purchase order from Binusu", client_message, user.email_address)
+                        send_order_email("Cryptocurreny Purchase order from Binusu", client_message, user.email_address)
 
-                    send_telegram(telegram_message)
+                        send_telegram(telegram_message)
+
+                    except Exception as e:
+                        send_error_telegram(e)
+                        return Response({"status":424, "error":"Service Unavailable due to failed dependency"}, status=status.HTTP_424_FAILED_DEPENDENCY)
                 
                 else:
                     message = email_format.sell_email(user.email_address, user.phone_number)
@@ -121,17 +132,21 @@ class OrdersView(APIView):
 
                     telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated)
 
-                    send_order_email("Crypto Sell Order", message, "brian.t@savannah.ug")
+                    try:
+                        send_order_email("Crypto Sell Order", message, "brian.t@savannah.ug")
 
-                    send_order_email("Crypto Sell Order", message, "arinrony@gmail.com")
+                        send_order_email("Crypto Sell Order", message, "arinrony@gmail.com")
 
-                    send_order_email("Cryptocurreny Sell order from Binusu", client_message, user.email_address)
+                        send_order_email("Cryptocurreny Sell order from Binusu", client_message, user.email_address)
 
-                    send_telegram(telegram_message)
-
+                        send_telegram(telegram_message)
+                    except Exception as e:
+                        send_error_telegram(e)
+                        return Response({"status":424, "error":"Service Unavailable due to failed dependency"}, status=status.HTTP_424_FAILED_DEPENDENCY)
 
                 return Response({"status":201, "data":order_serializer.data}, status=status.HTTP_201_CREATED)
-            except:
+            except Exception as e:
+                send_error_telegram(e)
                 return Response({"status":404, "error":"User doesnt have valid KYC"}, status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -166,6 +181,7 @@ class ResetPassword(APIView):
                 send_order_email("Password Reset", password_reset_message, serializer.data["email_address"])
                 return Response({"status":200, "message":"Success, Reset Email dispatched"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ConfirmPasswordReset(APIView):
     def post(self, request, format=None):
