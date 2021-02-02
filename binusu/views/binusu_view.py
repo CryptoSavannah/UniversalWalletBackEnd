@@ -6,10 +6,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 
-from ..serializers.serializers import KycSerializer, KycConfirmSerializer, OrdersSerializer, EmailLogsSerializer, TelegramLogsSerializer, OrderReceiverSerializer, KycUserSerializer, PasswordResetSerializer, PasswordResetCreateSerializer, PasswordConfirmSerializer
+from ..serializers.serializers import KycSerializer, KycConfirmSerializer, OrdersSerializer, EmailLogsSerializer, TelegramLogsSerializer, OrderReceiverSerializer, KycUserSerializer, PasswordResetSerializer, PasswordResetCreateSerializer, PasswordConfirmSerializer, OrdersDetailSerializer
 
 from ..helpers.helpers import get_random_alphanumeric_string
-from ..helpers.email_handler import buy_email, client_email, sell_email, client_sell_email, sign_up_email, password_reset_email, password_reset_404_email
+from ..helpers.email_handler import EmailFormatter, PersonalEmailFormatter
 from ..helpers.telegram_handler import send_telegram, telegram_buy_message, telegram_sell_message
 from ..helpers.baluwa import send_order_email
 from ..helpers.rates import get_rates
@@ -20,6 +20,11 @@ class KycListView(APIView):
     """
     # parser_classes = (MultiPartParser, FormParser)
 
+    def get(self, request, format=None):
+        serializer = KycUserSerializer(Kyc.objects.all(), many=True)
+        return Response({"status":200, "data":serializer.data}, status=status.HTTP_200_OK)
+
+
     def post(self, request, format=None):
         serializer = KycSerializer(data=request.data)
         if serializer.is_valid():
@@ -29,7 +34,8 @@ class KycListView(APIView):
             except:
                 serializer.save()
 
-                welcome_email = sign_up_email(serializer.data["first_name"])
+                PersonalEmail = PersonalEmailFormatter(serializer.data["first_name"])
+                welcome_email = PersonalEmail.sign_up_email()
                 send_order_email("Welcome to Binusu", welcome_email, serializer.data["email_address"])
 
                 return Response({"status":201, "data":serializer.data}, status=status.HTTP_201_CREATED)
@@ -60,6 +66,10 @@ class OrdersView(APIView):
     """
     List all and create a new order
     """
+    def get(self, request, format=None):
+        serializer = OrdersDetailSerializer(Orders.objects.all(), many=True)
+        return Response({"status":200, "data":serializer.data}, status=status.HTTP_200_OK)
+
     def post(self, request, format=None):
         serializer = OrderReceiverSerializer(data=request.data)
         if serializer.is_valid():
@@ -85,11 +95,14 @@ class OrdersView(APIView):
                 order_amount_formated = "{:0,.2f}".format(float(order_serializer.data["order_amount_fiat"]))
                 crypto_unit_formated = "{:0,.2f}".format(float(order_serializer.data["crypto_unit_price"]))
 
+                email_format = EmailFormatter(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated)
+
+
                 if(order_serializer.data["order_type"]=="BUY"):
+                    
+                    message = email_format.buy_email(user.email_address, user.phone_number)
 
-                    message = buy_email(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated, user.email_address, user.phone_number)
-
-                    client_message = client_email(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated)
+                    client_message = email_format.client_buy_email()
 
                     telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated)
 
@@ -102,9 +115,9 @@ class OrdersView(APIView):
                     send_telegram(telegram_message)
                 
                 else:
-                    message = sell_email(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated)
+                    message = email_format.sell_email(user.email_address, user.phone_number)
 
-                    client_message = client_sell_email(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated)
+                    client_message = email_format.client_sell_email()
 
                     telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated)
 

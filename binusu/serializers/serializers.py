@@ -16,7 +16,7 @@ class KycUserSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Kyc
-        fields = ('id', 'first_name', 'last_name', 'email_address')
+        fields = ('id', 'first_name', 'last_name', 'email_address', 'date_submitted')
 
 class KycConfirmSerializer(serializers.Serializer):
     """
@@ -56,6 +56,16 @@ class OrdersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Orders
         fields = ('id', 'related_kyc', 'order_number', 'order_type', 'crypto_type', 'fiat_type', 'order_amount_crypto', 'order_amount_fiat', 'order_status', 'crypto_unit_price')
+
+class OrdersDetailSerializer(serializers.ModelSerializer):
+    """
+    Model serializer for order details
+    """
+    related_kyc = KycUserSerializer(read_only=True)
+
+    class Meta:
+        model = Orders
+        fields = ('id', 'related_kyc', 'order_number', 'order_type', 'crypto_type', 'fiat_type', 'order_amount_crypto', 'order_amount_fiat', 'order_status', 'crypto_unit_price', 'completed_by', 'date_ordered')
 
 class EmailLogsSerializer(serializers.ModelSerializer):
     """
