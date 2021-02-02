@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 
-from ..serializers.serializers import KycSerializer, KycConfirmSerializer, OrdersSerializer, EmailLogsSerializer, TelegramLogsSerializer, OrderReceiverSerializer, KycUserSerializer, PasswordResetSerializer, PasswordResetCreateSerializer, PasswordConfirmSerializer
+from ..serializers.serializers import KycSerializer, KycConfirmSerializer, OrdersSerializer, EmailLogsSerializer, TelegramLogsSerializer, OrderReceiverSerializer, KycUserSerializer, PasswordResetSerializer, PasswordResetCreateSerializer, PasswordConfirmSerializer, OrdersDetailSerializer
 
 from ..helpers.helpers import get_random_alphanumeric_string
 from ..helpers.email_handler import buy_email, client_email, sell_email, client_sell_email, sign_up_email, password_reset_email, password_reset_404_email
@@ -60,6 +60,10 @@ class OrdersView(APIView):
     """
     List all and create a new order
     """
+    def get(self, request, format=None):
+        serializer = OrdersDetailSerializer(Orders.objects.all(), many=True)
+        return Response({"status":200, "data":serializer.data}, status=status.HTTP_200_OK)
+
     def post(self, request, format=None):
         serializer = OrderReceiverSerializer(data=request.data)
         if serializer.is_valid():
