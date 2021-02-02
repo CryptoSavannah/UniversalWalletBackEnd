@@ -28,7 +28,8 @@ class PasswordResets(models.Model):
 class Orders(models.Model):
     order_number    = models.CharField(max_length=250)
     related_kyc     = models.ForeignKey(Kyc, on_delete=models.CASCADE, related_name="related_kyc")
-    order_type      = models.CharField(max_length=10, choices=ORDER_TYPES)      
+    order_type      = models.CharField(max_length=10, choices=ORDER_TYPES)
+    wallet_address  = models.CharField(max_length=250, null=True, blank=True)     
     crypto_type     = models.CharField(max_length=10, choices=CRYPTO_TYPES)  
     fiat_type       = models.CharField(max_length=10, choices=FIAT_TYPES, default='UGX')  
     order_amount_crypto  = models.DecimalField(max_digits=20, decimal_places=6)
