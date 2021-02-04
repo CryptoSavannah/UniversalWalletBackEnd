@@ -171,13 +171,16 @@ class ResetPassword(APIView):
                 password_serializer.is_valid(raise_exception=True)
                 password_serializer.save()
 
-                password_reset_message = password_reset_email(user.first_name, reset_token)
+                personal_email = PersonalEmailFormatter(user.first_name)
+
+                password_reset_message = personal_email.password_reset_email(reset_token)
 
                 send_order_email("Password Reset", password_reset_message, user.email_address)
                 
                 return Response({"status":200, "message":"Success, Reset Email dispatched"}, status=status.HTTP_200_OK)
             except:
-                password_reset_message = password_reset_404_email(serializer.data["email_address"])
+                personal_email = PersonalEmailFormatter("first_name")
+                password_reset_message = personal_email.password_reset_404_email(serializer.data["email_address"])
                 send_order_email("Password Reset", password_reset_message, serializer.data["email_address"])
                 return Response({"status":200, "message":"Success, Reset Email dispatched"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
