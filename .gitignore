@@ -3,3 +3,5 @@ __pycache__/
 .vscode
 accounts/helpers/accounts.py
 binusu/helpers/baluwa.py
+binusu/constants/constants.py
+loyalty_api/loyalty_api/settings.py
