@@ -37,7 +37,7 @@ class PersonalEmailFormatter:
     def __init__(self, first_name):
         self.first_name = first_name
 
-    def sign_up_email(self, first_name):
+    def sign_up_email(self):
         return "Hey {} \n Welcome to binusu.com. You can now proceed to transact in crypto. Supported coins are BTC, ETH, CELO, cUSD. Please reach out to support@binusu.com for further details".format(self.first_name)
 
     def order_confirm_email(self):
