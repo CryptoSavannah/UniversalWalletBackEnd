@@ -1,4 +1,6 @@
 import hashlib
+import jwt
+from loyalty_api.settings import SECRET_KEY
 from ..models import Kyc, Orders, EmailLogs, TelegramLogs, PasswordResets
 from rest_framework import status
 from rest_framework.views import APIView
@@ -149,6 +151,28 @@ class OrdersView(APIView):
                 send_error_telegram(e)
                 return Response({"status":404, "error":"User doesnt have valid KYC"}, status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class OrdersStatistics(APIView):
+    """
+    Statistics on orders
+    """
+    def get(self, request, format=None):
+        try:
+        
+            if(request.headers['Token']):
+                decoded_jwt = jwt.decode(request.headers['Token'], SECRET_KEY, algorithms=["HS256"])
+                if(decoded_jwt['id']):
+                    buy_orders          =   Orders.objects.filter(order_type="BUY").count()
+                    sell_orders         =   Orders.objects.filter(order_type="BUY").count()
+                    fullfilled_orders   =   Orders.objects.filter(order_status="FULFILLED").count()
+                    unfullfilled_orders =   Orders.objects.filter(order_status="UNFULFILLED").count()
+                    return Response({"status":201, "data":{"buy_orders":buy_orders, "sell_orders":sell_orders, "fulfilled_orders":fullfilled_orders, "unfulfilled_orders":unfullfilled_orders}})
+                
+                return Response({"status":400, "error":"Bad Token, Go away with your bad token"}, status=status.HTTP_400_BAD_REQUEST)    
+            return Response({"status":401, "error":"Unauthorized, Please provide token"}, status=status.HTTP_401_UNAUTHORIZED)
+        except:
+            return Response({"status":400, "error":"Bad Token, Go away with your bad token"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ResetPassword(APIView):
