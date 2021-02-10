@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from ..models import Kyc, Orders, EmailLogs, TelegramLogs, PasswordResets
+from ..serializers.account_serializer import UserDetailSerializer
 
 
 class KycSerializer(serializers.ModelSerializer):
@@ -62,10 +63,19 @@ class OrdersDetailSerializer(serializers.ModelSerializer):
     Model serializer for order details
     """
     related_kyc = KycUserSerializer(read_only=True)
+    fulfilled_by = UserDetailSerializer(read_only=True)
 
     class Meta:
         model = Orders
-        fields = ('id', 'related_kyc', 'order_number', 'order_type', 'crypto_type', 'fiat_type', 'order_amount_crypto', 'order_amount_fiat', 'order_status', 'crypto_unit_price', 'completed_by', 'date_ordered')
+        fields = ('id', 'related_kyc', 'order_number', 'order_type', 'crypto_type', 'fiat_type', 'order_amount_crypto', 'order_amount_fiat', 'order_status', 'crypto_unit_price', 'fulfilled_by', 'date_ordered')
+
+class OrdersUpdateSerializer(serializers.Serializer):
+    """
+    Serializer for orders update
+    """
+    order_number    = serializers.CharField(max_length=250)
+    user_id         = serializers.IntegerField()
+    status          = serializers.CharField(max_length=20)
 
 class EmailLogsSerializer(serializers.ModelSerializer):
     """

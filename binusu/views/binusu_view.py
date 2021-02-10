@@ -1,14 +1,14 @@
 import hashlib
 import jwt
 from loyalty_api.settings import SECRET_KEY
-from ..models import Kyc, Orders, EmailLogs, TelegramLogs, PasswordResets
+from ..models import Kyc, Orders, EmailLogs, TelegramLogs, PasswordResets, AccountUser
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 
-from ..serializers.serializers import KycSerializer, KycConfirmSerializer, OrdersSerializer, EmailLogsSerializer, TelegramLogsSerializer, OrderReceiverSerializer, KycUserSerializer, PasswordResetSerializer, PasswordResetCreateSerializer, PasswordConfirmSerializer, OrdersDetailSerializer
+from ..serializers.serializers import KycSerializer, KycConfirmSerializer, OrdersSerializer, EmailLogsSerializer, TelegramLogsSerializer, OrderReceiverSerializer, KycUserSerializer, PasswordResetSerializer, PasswordResetCreateSerializer, PasswordConfirmSerializer, OrdersDetailSerializer, OrdersUpdateSerializer
 
 from ..helpers.helpers import get_random_alphanumeric_string
 from ..helpers.email_handler import EmailFormatter, PersonalEmailFormatter
@@ -75,8 +75,17 @@ class OrdersView(APIView):
     List all and create a new order
     """
     def get(self, request, format=None):
-        serializer = OrdersDetailSerializer(Orders.objects.all(), many=True)
-        return Response({"status":200, "data":serializer.data}, status=status.HTTP_200_OK)
+        try: 
+            if(request.headers['Token']):
+                decoded_jwt = jwt.decode(request.headers['Token'], SECRET_KEY, algorithms=["HS256"])
+                if(decoded_jwt['id']):
+                    serializer = OrdersDetailSerializer(Orders.objects.exclude(order_status="CANCELLED"), many=True)
+                    return Response({"status":200, "data":serializer.data}, status=status.HTTP_200_OK)
+                return Response({"status":401, "error":"Unauthorized, Please provide token"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"status":401, "error":"Unauthorized, Please provide token"}, status=status.HTTP_401_UNAUTHORIZED)
+        except:
+            return Response({"status":400, "error":"Bad Token, Go away with your bad token"}, status=status.HTTP_400_BAD_REQUEST)
+                
 
     def post(self, request, format=None):
         serializer = OrderReceiverSerializer(data=request.data)
@@ -153,21 +162,45 @@ class OrdersView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class UpdateOrderDetails(APIView):
+
+    def patch(self, request, format=None):
+        if(request.headers['Token']):
+            decoded_jwt = jwt.decode(request.headers['Token'], SECRET_KEY, algorithms=["HS256"])
+            if(decoded_jwt['id']):
+                serializer = OrdersUpdateSerializer(data=request.data)
+                if serializer.is_valid():
+                    try:
+                        order_to_update = Orders.objects.get(order_number=serializer.data['order_number'])
+                        user_updating   = AccountUser.objects.get(id=serializer.data['user_id'])
+
+                        if(serializer.data["status"] == "FULFILLED" or serializer.data['status'] == "CANCELLED" ):
+                            Orders.objects.update_or_create(id=order_to_update.id, defaults={'fullfilled_by':user_updating, 'order_status': serializer.data["status"]}
+                            )
+                            return Response({"status":200, "data":serializer.data}, status=status.HTTP_200_OK)
+                        return Response({"status":400, "error":"Invalid status, Please use CANCELLED OR FULFILLED"}, status=status.HTTP_400_BAD_REQUEST)
+                    except Exception as e:
+                        # send_error_telegram(e)
+                        return Response({"status":400, "error":"Invalid order number"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"status":401, "error":"Unauthorized, Please provide token"}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({"status":401, "error":"Unauthorized, Please provide token"}, status=status.HTTP_401_UNAUTHORIZED)
+                
+
 class OrdersStatistics(APIView):
     """
     Statistics on orders
     """
     def get(self, request, format=None):
-        try:
-        
+        try: 
             if(request.headers['Token']):
                 decoded_jwt = jwt.decode(request.headers['Token'], SECRET_KEY, algorithms=["HS256"])
                 if(decoded_jwt['id']):
                     buy_orders          =   Orders.objects.filter(order_type="BUY").count()
-                    sell_orders         =   Orders.objects.filter(order_type="BUY").count()
+                    sell_orders         =   Orders.objects.filter(order_type="SELL").count()
                     fullfilled_orders   =   Orders.objects.filter(order_status="FULFILLED").count()
                     unfullfilled_orders =   Orders.objects.filter(order_status="UNFULFILLED").count()
-                    return Response({"status":201, "data":{"buy_orders":buy_orders, "sell_orders":sell_orders, "fulfilled_orders":fullfilled_orders, "unfulfilled_orders":unfullfilled_orders}})
+                    return Response({"status":200, "data":{"buy_orders":buy_orders, "sell_orders":sell_orders, "fulfilled_orders":fullfilled_orders, "unfulfilled_orders":unfullfilled_orders}})
                 
                 return Response({"status":400, "error":"Bad Token, Go away with your bad token"}, status=status.HTTP_400_BAD_REQUEST)    
             return Response({"status":401, "error":"Unauthorized, Please provide token"}, status=status.HTTP_401_UNAUTHORIZED)

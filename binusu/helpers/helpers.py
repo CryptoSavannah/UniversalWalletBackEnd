@@ -9,3 +9,6 @@ def get_random_alphanumeric_string(length):
         return "{}{}".format("TEST-", result_str)
     else:
         return "{}{}".format("BN", result_str)
+
+def generate_otp():
+    return random.randint(1000, 9999)
