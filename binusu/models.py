@@ -45,7 +45,7 @@ class Orders(models.Model):
     wallet_address  = models.CharField(max_length=250, null=True, blank=True)     
     crypto_type     = models.CharField(max_length=10, choices=CRYPTO_TYPES)  
     fiat_type       = models.CharField(max_length=10, choices=FIAT_TYPES, default='UGX')  
-    order_amount_crypto  = models.DecimalField(max_digits=20, decimal_places=6)
+    order_amount_crypto  = models.DecimalField(max_digits=20, decimal_places=15)
     order_amount_fiat    = models.DecimalField(max_digits=20, decimal_places=2)   
     order_status    = models.CharField(max_length=15, choices=ORDER_STATUS, default='UNFULFILLED')  
     crypto_unit_price = models.DecimalField(max_digits=20, decimal_places=2)
