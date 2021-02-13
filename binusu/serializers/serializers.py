@@ -46,7 +46,7 @@ class OrderReceiverSerializer(serializers.Serializer):
     order_type              =   serializers.CharField(max_length=250)
     crypto_type             =   serializers.CharField(max_length=250)
     fiat_type               =   serializers.CharField(max_length=250)
-    order_amount_crypto     =   serializers.DecimalField(max_digits=20, decimal_places=6)
+    order_amount_crypto     =   serializers.DecimalField(max_digits=20, decimal_places=15)
     order_amount_fiat       =   serializers.DecimalField(max_digits=20, decimal_places=2)
     crypto_unit_price       =   serializers.DecimalField(max_digits=20, decimal_places=2)
 
