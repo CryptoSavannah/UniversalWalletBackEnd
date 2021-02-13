@@ -49,3 +49,13 @@ class PersonalEmailFormatter:
     def password_reset_404_email(self, email):
         return "We received a request to reset the password to access Binusu OTC with your email address {} from a {{operating_system}} device using {{browser_name}}, but we were unable to find an account associated with this address. If you use Binusu OTC and were expecting this email, consider trying to request a password reset using the email address associated with your account.".format(email)
 
+class AdminEmailFormatter:
+    """
+    Handle all admin related emails
+    """
+
+    def __init__(self, first_name):
+        self.first_name = first_name
+
+    def activate_account_email(self, otp):
+        return "Hey {}, Please use the otp {} provided to activate your account".format(self.first_name, otp)
