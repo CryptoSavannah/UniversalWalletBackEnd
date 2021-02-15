@@ -11,6 +11,15 @@ class KycSerializer(serializers.ModelSerializer):
         model = Kyc
         fields = ('id', 'first_name', 'last_name' ,'phone_number', 'email_address', 'password','nin_number', 'date_submitted')
 
+    def validate_nin_number(self, value):
+        """
+        Validate nin_number
+        """
+        if len(value) == 14 and value.startswith(("CM", "CF", "PM", "PF")):
+            return value
+        raise serializers.ValidationError("Invalid Nin Number")
+
+
 class KycUserSerializer(serializers.ModelSerializer):
     """
     Short serializer for kyc model user
