@@ -37,10 +37,10 @@ class KycListView(APIView):
                 try:
                     serializer.save()
 
-                    # PersonalEmail = PersonalEmailFormatter(serializer.data["first_name"])
-                    # welcome_email = PersonalEmail.sign_up_email()
+                    PersonalEmail = PersonalEmailFormatter(serializer.data["first_name"])
+                    welcome_email = PersonalEmail.sign_up_email()
 
-                    # send_order_email("Welcome to Binusu", welcome_email, serializer.data["email_address"])
+                    send_order_email("Welcome to Binusu", welcome_email, serializer.data["email_address"])
 
                 except Exception as e:
                     send_error_telegram(e)
