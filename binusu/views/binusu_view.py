@@ -79,7 +79,7 @@ class OrdersView(APIView):
             if(request.headers['Token']):
                 decoded_jwt = jwt.decode(request.headers['Token'], SECRET_KEY, algorithms=["HS256"])
                 if(decoded_jwt['id']):
-                    serializer = OrdersDetailSerializer(Orders.objects.exclude(order_status="CANCELLED"), many=True)
+                    serializer = OrdersDetailSerializer(Orders.objects.filter(order_status="FULFILLED"), many=True)
                     return Response({"status":200, "data":serializer.data}, status=status.HTTP_200_OK)
                 return Response({"status":401, "error":"Unauthorized, Please provide token"}, status=status.HTTP_401_UNAUTHORIZED)
             return Response({"status":401, "error":"Unauthorized, Please provide token"}, status=status.HTTP_401_UNAUTHORIZED)
@@ -180,7 +180,7 @@ class UpdateOrderDetails(APIView):
                             return Response({"status":200, "data":serializer.data}, status=status.HTTP_200_OK)
                         return Response({"status":400, "error":"Invalid status, Please use CANCELLED OR FULFILLED"}, status=status.HTTP_400_BAD_REQUEST)
                     except Exception as e:
-                        # send_error_telegram(e)
+                        send_error_telegram(e)
                         return Response({"status":400, "error":"Invalid order number"}, status=status.HTTP_400_BAD_REQUEST)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             return Response({"status":401, "error":"Unauthorized, Please provide token"}, status=status.HTTP_401_UNAUTHORIZED)
@@ -275,19 +275,51 @@ class GetCurrentRates(APIView):
             rates_data = {
                 "BTC":{
                     "BUY":rates_call[0]['Buy'],
-                    "SELL":rates_call[0]['Sell']
+                    "SELL":rates_call[0]['Sell'],
+                    "TRANSFER_FEE_CRYPTO":rates_call[0]['transfer_fee_crypt'],
+                    "TRANSFER_FEE_UGX":rates_call[0]['transfer_fee_ugx'],
+                    "MINIMUM_CRYPTO_AMOUNT":rates_call[0]['minimum_crypt'],
+                    "MINIMUM_UGX_AMOUNT":rates_call[0]['minimum_ugx']
                 },
                 "ETH":{
-                    "BUY":rates_call[2]['Buy'],
-                    "SELL":rates_call[2]['Sell']
+                    "BUY":rates_call[1]['Buy'],
+                    "SELL":rates_call[1]['Sell'],
+                    "TRANSFER_FEE_CRYPTO":rates_call[1]['transfer_fee_crypt'],
+                    "TRANSFER_FEE_UGX":rates_call[1]['transfer_fee_ugx'],
+                    "MINIMUM_CRYPTO_AMOUNT":rates_call[1]['minimum_crypt'],
+                    "MINIMUM_UGX_AMOUNT":rates_call[1]['minimum_ugx']
                 },
                 "CELO":{
-                    "BUY":rates_call[9]['Buy'],
-                    "SELL":rates_call[9]['Sell']
+                    "BUY":rates_call[5]['Buy'],
+                    "SELL":rates_call[5]['Sell'],
+                    "TRANSFER_FEE_CRYPTO":rates_call[5]['transfer_fee_crypt'],
+                    "TRANSFER_FEE_UGX":rates_call[5]['transfer_fee_ugx'],
+                    "MINIMUM_CRYPTO_AMOUNT":rates_call[5]['minimum_crypt'],
+                    "MINIMUM_UGX_AMOUNT":rates_call[5]['minimum_ugx']
                 },
                 "cUSD":{
+                    "BUY":rates_call[3]['Buy'],
+                    "SELL":rates_call[3]['Sell'],
+                    "TRANSFER_FEE_CRYPTO":rates_call[3]['transfer_fee_crypt'],
+                    "TRANSFER_FEE_UGX":rates_call[3]['transfer_fee_ugx'],
+                    "MINIMUM_CRYPTO_AMOUNT":rates_call[3]['minimum_crypt'],
+                    "MINIMUM_UGX_AMOUNT":rates_call[3]['minimum_ugx']
+                },
+                "BCH":{
                     "BUY":rates_call[4]['Buy'],
-                    "SELL":rates_call[4]['Sell']
+                    "SELL":rates_call[4]['Sell'],
+                    "TRANSFER_FEE_CRYPTO":rates_call[4]['transfer_fee_crypt'],
+                    "TRANSFER_FEE_UGX":rates_call[4]['transfer_fee_ugx'],
+                    "MINIMUM_CRYPTO_AMOUNT":rates_call[4]['minimum_crypt'],
+                    "MINIMUM_UGX_AMOUNT":rates_call[4]['minimum_ugx']
+                },
+                "LTC":{
+                    "BUY":rates_call[2]['Buy'],
+                    "SELL":rates_call[2]['Sell'],
+                    "TRANSFER_FEE_CRYPTO":rates_call[2]['transfer_fee_crypt'],
+                    "TRANSFER_FEE_UGX":rates_call[2]['transfer_fee_ugx'],
+                    "MINIMUM_CRYPTO_AMOUNT":rates_call[2]['minimum_crypt'],
+                    "MINIMUM_UGX_AMOUNT":rates_call[2]['minimum_ugx']
                 }
             }
             return Response({"status":200, "data":rates_data})

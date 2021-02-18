@@ -72,11 +72,11 @@ class OrdersDetailSerializer(serializers.ModelSerializer):
     Model serializer for order details
     """
     related_kyc = KycUserSerializer(read_only=True)
-    fulfilled_by = UserDetailSerializer(read_only=True)
+    fullfilled_by = UserDetailSerializer(read_only=True)
 
     class Meta:
         model = Orders
-        fields = ('id', 'related_kyc', 'order_number', 'order_type', 'crypto_type', 'fiat_type', 'order_amount_crypto', 'order_amount_fiat', 'order_status', 'crypto_unit_price', 'fulfilled_by', 'date_ordered')
+        fields = ('id', 'related_kyc', 'order_number', 'order_type', 'crypto_type', 'fiat_type', 'order_amount_crypto', 'order_amount_fiat', 'order_status', 'crypto_unit_price', 'fullfilled_by', 'date_ordered')
 
 class OrdersUpdateSerializer(serializers.Serializer):
     """
