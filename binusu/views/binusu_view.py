@@ -79,7 +79,7 @@ class OrdersView(APIView):
             if(request.headers['Token']):
                 decoded_jwt = jwt.decode(request.headers['Token'], SECRET_KEY, algorithms=["HS256"])
                 if(decoded_jwt['id']):
-                    serializer = OrdersDetailSerializer(Orders.objects.filter(order_status="FULFILLED"), many=True)
+                    serializer = OrdersDetailSerializer(Orders.objects.all(), many=True)
                     return Response({"status":200, "data":serializer.data}, status=status.HTTP_200_OK)
                 return Response({"status":401, "error":"Unauthorized, Please provide token"}, status=status.HTTP_401_UNAUTHORIZED)
             return Response({"status":401, "error":"Unauthorized, Please provide token"}, status=status.HTTP_401_UNAUTHORIZED)
