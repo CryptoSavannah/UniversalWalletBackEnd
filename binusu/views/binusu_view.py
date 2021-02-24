@@ -102,7 +102,11 @@ class OrdersView(APIView):
                     "order_amount_crypto": serializer.data['order_amount_crypto'],
                     "order_amount_fiat": serializer.data['order_amount_fiat'],
                     "order_status": "UNFULFILLED",
-                    "crypto_unit_price": serializer.data['crypto_unit_price']
+                    "crypto_unit_price": serializer.data['crypto_unit_price'],
+                    "crypto_address": serializer.data['crypto_address'],
+                    "crypto_fees": serializer.data['crypto_fees'],
+                    "total_payable_amount_fiat": serializer.data['total_payable_amount_fiat'],
+                    "warning": serializer.data['warning'],
                 }
 
                 order_serializer = OrdersSerializer(data=order_data)
