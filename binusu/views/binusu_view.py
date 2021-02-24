@@ -121,9 +121,9 @@ class OrdersView(APIView):
 
                 if(order_serializer.data["order_type"]=="BUY"):
                     
-                    message = email_format.buy_email(user.email_address, user.phone_number)
+                    message = email_format.buy_email(user.email_address, user.phone_number, serializer.data['crypto_fees'], serializer.data['total_payable_amount_fiat'], serializer.data['crypto_address'])
 
-                    client_message = email_format.client_buy_email()
+                    client_message = email_format.client_buy_email(serializer.data['crypto_fees'], serializer.data['total_payable_amount_fiat'])
 
                     telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated)
 
