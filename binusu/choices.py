@@ -9,7 +9,8 @@ CRYPTO_TYPES = [
     ('CELO', 'CELO'),
     ('XRP', 'XRP'),
     ('LTC', 'LTC'),
-    ('cUSD', 'cUSD')
+    ('cUSD', 'cUSD'),
+    ('BCH', 'BCH')
 ]
 
 FIAT_TYPES = [
