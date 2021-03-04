@@ -16,7 +16,7 @@ class EmailFormatter:
         self.crypto_unit_price = crypto_unit_price
 
     def buy_email(self, email_address, phone_number, crypto_fees, total_amount, crypto_address):
-        return "Order No. {}, \n type: {}, \n of crypto {}{} using {}{} at market price of {} per {}. Crypto trnasfer fees: {} totalling up to {} UGX. Client Email address is {},Phone Number is {} and Crypto Address is {}".format(self.order_number, self.order_type, self.order_amount_crypto, self.crypto_type, self.order_amount_fiat, self.fiat_type, self.crypto_unit_price, self.crypto_type, email_address, phone_number, crypto_fees, total_amount, crypto_address)
+        return "Order No. {}, \n type: {}, \n of crypto {}{} using {}{} at market price of {} per {}. Crypto transfer fees: {} totalling up to {} UGX. Client Email address is {},Phone Number is {} and Crypto Address is {}".format(self.order_number, self.order_type, self.order_amount_crypto, self.crypto_type, self.order_amount_fiat, self.fiat_type, self.crypto_unit_price, self.crypto_type, crypto_fees, total_amount, email_address, phone_number, crypto_address)
 
     def client_buy_email(self, crypto_fees, total_amount):
         return "Order No. {}, \n type: {}, \n of crypto {}{} \n using {}{} at market price of {} per {}. The Crypto transfer fees associated with this transaction are {} totalling up to {} UGX. Order has been confirmed. Please hold on as one of our agents contacts you.".format(self.order_number, self.order_type, self.order_amount_crypto, self.crypto_type, self.order_amount_fiat, self.fiat_type, self.crypto_unit_price, self.crypto_type, crypto_fees, total_amount)
