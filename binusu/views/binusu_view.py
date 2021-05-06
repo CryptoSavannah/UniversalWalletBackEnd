@@ -128,7 +128,7 @@ class OrdersView(APIView):
                     telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated)
 
                     try:
-                        send_order_email("Crypto Buy Order", message, "kapsonkatongole@gmail.com")
+                        send_order_email("Crypto Buy Order", message, "twhy.brian@gmail.com")
 
                         send_order_email("Crypto Buy Order", message, "arinrony@gmail.com")
 
@@ -148,7 +148,7 @@ class OrdersView(APIView):
                     telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated)
 
                     try:
-                        send_order_email("Crypto Sell Order", message, "kapsonkatongole@gmail.com")
+                        send_order_email("Crypto Sell Order", message, "twhy.brian@gmail.com")
 
                         send_order_email("Crypto Sell Order", message, "arinrony@gmail.com")
 
