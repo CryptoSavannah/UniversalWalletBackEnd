@@ -11,7 +11,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from ..serializers.serializers import KycSerializer, KycConfirmSerializer, OrdersSerializer, EmailLogsSerializer, TelegramLogsSerializer, OrderReceiverSerializer, KycUserSerializer, PasswordResetSerializer, PasswordResetCreateSerializer, PasswordConfirmSerializer, OrdersDetailSerializer, OrdersUpdateSerializer
 
 from ..helpers.helpers import get_random_alphanumeric_string
-from ..helpers.email_handler import EmailFormatter, PersonalEmailFormatter
+from ..helpers.email_handler import EmailFormatter, PersonalEmailFormatter, email_structure
 from ..helpers.telegram_handler import send_telegram, telegram_buy_message, telegram_sell_message, send_error_telegram, telegram_error_message
 from ..helpers.baluwa import send_order_email
 from ..helpers.rates import get_rates
@@ -128,7 +128,7 @@ class OrdersView(APIView):
                     telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated)
 
                     try:
-                        send_order_email("Crypto Buy Order", message, "twhy.brian@gmail.com")
+                        send_order_email("Crypto Buy Order", message, "kapsonkatongole@gmail.com")
 
                         send_order_email("Crypto Buy Order", message, "arinrony@gmail.com")
 
@@ -148,7 +148,7 @@ class OrdersView(APIView):
                     telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated)
 
                     try:
-                        send_order_email("Crypto Sell Order", message, "twhy.brian@gmail.com")
+                        send_order_email("Crypto Sell Order", message, "kapsonkatongole@gmail.com")
 
                         send_order_email("Crypto Sell Order", message, "arinrony@gmail.com")
 
@@ -283,7 +283,10 @@ class GetCurrentRates(APIView):
                     "TRANSFER_FEE_CRYPTO":rates_call[0]['transfer_fee_crypt'],
                     "TRANSFER_FEE_UGX":rates_call[0]['transfer_fee_ugx'],
                     "MINIMUM_CRYPTO_AMOUNT":rates_call[0]['minimum_crypt'],
-                    "MINIMUM_UGX_AMOUNT":rates_call[0]['minimum_ugx']
+                    "MINIMUM_UGX_AMOUNT":rates_call[0]['minimum_ugx'],
+                    "SLOW":rates_call[0]['slow'],
+                    "NORMAL":rates_call[0]['normal'],
+                    "FAST":rates_call[0]['fast']
                 },
                 "ETH":{
                     "BUY":rates_call[1]['Buy'],
@@ -291,7 +294,10 @@ class GetCurrentRates(APIView):
                     "TRANSFER_FEE_CRYPTO":rates_call[1]['transfer_fee_crypt'],
                     "TRANSFER_FEE_UGX":rates_call[1]['transfer_fee_ugx'],
                     "MINIMUM_CRYPTO_AMOUNT":rates_call[1]['minimum_crypt'],
-                    "MINIMUM_UGX_AMOUNT":rates_call[1]['minimum_ugx']
+                    "MINIMUM_UGX_AMOUNT":rates_call[1]['minimum_ugx'],
+                    "SLOW":rates_call[1]['slow'],
+                    "NORMAL":rates_call[1]['normal'],
+                    "FAST":rates_call[1]['fast']
                 },
                 "CELO":{
                     "BUY":rates_call[5]['Buy'],
@@ -299,7 +305,10 @@ class GetCurrentRates(APIView):
                     "TRANSFER_FEE_CRYPTO":rates_call[5]['transfer_fee_crypt'],
                     "TRANSFER_FEE_UGX":rates_call[5]['transfer_fee_ugx'],
                     "MINIMUM_CRYPTO_AMOUNT":rates_call[5]['minimum_crypt'],
-                    "MINIMUM_UGX_AMOUNT":rates_call[5]['minimum_ugx']
+                    "MINIMUM_UGX_AMOUNT":rates_call[5]['minimum_ugx'],
+                    "SLOW":rates_call[5]['slow'],
+                    "NORMAL":rates_call[5]['normal'],
+                    "FAST":rates_call[5]['fast']
                 },
                 "cUSD":{
                     "BUY":rates_call[3]['Buy'],
@@ -307,7 +316,10 @@ class GetCurrentRates(APIView):
                     "TRANSFER_FEE_CRYPTO":rates_call[3]['transfer_fee_crypt'],
                     "TRANSFER_FEE_UGX":rates_call[3]['transfer_fee_ugx'],
                     "MINIMUM_CRYPTO_AMOUNT":rates_call[3]['minimum_crypt'],
-                    "MINIMUM_UGX_AMOUNT":rates_call[3]['minimum_ugx']
+                    "MINIMUM_UGX_AMOUNT":rates_call[3]['minimum_ugx'],
+                    "SLOW":rates_call[3]['slow'],
+                    "NORMAL":rates_call[3]['normal'],
+                    "FAST":rates_call[3]['fast']
                 },
                 "BCH":{
                     "BUY":rates_call[4]['Buy'],
@@ -315,7 +327,10 @@ class GetCurrentRates(APIView):
                     "TRANSFER_FEE_CRYPTO":rates_call[4]['transfer_fee_crypt'],
                     "TRANSFER_FEE_UGX":rates_call[4]['transfer_fee_ugx'],
                     "MINIMUM_CRYPTO_AMOUNT":rates_call[4]['minimum_crypt'],
-                    "MINIMUM_UGX_AMOUNT":rates_call[4]['minimum_ugx']
+                    "MINIMUM_UGX_AMOUNT":rates_call[4]['minimum_ugx'],
+                    "SLOW":rates_call[4]['slow'],
+                    "NORMAL":rates_call[4]['normal'],
+                    "FAST":rates_call[4]['fast']
                 },
                 "LTC":{
                     "BUY":rates_call[2]['Buy'],
@@ -323,7 +338,10 @@ class GetCurrentRates(APIView):
                     "TRANSFER_FEE_CRYPTO":rates_call[2]['transfer_fee_crypt'],
                     "TRANSFER_FEE_UGX":rates_call[2]['transfer_fee_ugx'],
                     "MINIMUM_CRYPTO_AMOUNT":rates_call[2]['minimum_crypt'],
-                    "MINIMUM_UGX_AMOUNT":rates_call[2]['minimum_ugx']
+                    "MINIMUM_UGX_AMOUNT":rates_call[2]['minimum_ugx'],
+                    "SLOW":rates_call[2]['slow'],
+                    "NORMAL":rates_call[2]['normal'],
+                    "FAST":rates_call[2]['fast']
                 }
             }
             return Response({"status":200, "data":rates_data})

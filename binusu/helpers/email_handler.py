@@ -1,4 +1,17 @@
 from django.core.mail import send_mail
+import html
+
+def email_structure(order_owner, order_type, order_number, crypto_type, order_amount_crypto, fiat_type, order_amount_fiat, crypto_fees, total_amount, email_address, phone_number, crypto_address):
+    style = 'table {font-family: arial, sans-serif;border-collapse: collapse;width: 100%;}td, th {border: 1px solid #dddddd;text-align: left;padding: 8px;}tr:nth-child(even) {background-color: #dddddd;}'
+    escaped_style = html.escape(style)
+
+    if(order_owner=='client'):
+        table = '<!DOCTYPE html><html><head><style>{}</style></head><body><h2>  {} Order Number: {} </h2><table><tr><th>Order Detail</th><th>Order Amount</th></tr><tr><td>Crypto Type</td><td>{}</td></tr><tr><td>Crypto Amount</td><td>{}</td></tr><tr><td>Fiat Amount ({})</td><td>{}</td></tr><tr><td>Crypto Transaction Fees</td><td>{}</td></tr><tr><td>Total Amount</td><td>{}</td></tr><tr><td>{} Address</td><td>{}</td></tr></table></body></html>'.format(escaped_style, order_type, order_number, crypto_type, order_amount_crypto, fiat_type, order_amount_fiat, crypto_fees, total_amount, crypto_type, crypto_address)
+        return table
+
+    table = '<!DOCTYPE html><html><head><style>{}</style></head><body><h2>  {} Order Number: {} </h2><table><tr><th>Order Detail</th><th>Order Amount</th></tr><tr><td>Crypto Type</td><td>{}</td></tr><tr><td>Crypto Amount</td><td>{}</td></tr><tr><td>Fiat Amount ({})</td><td>{}</td></tr><tr><td>Crypto Transaction Fees</td><td>{}</td></tr><tr><td>Total Amount</td><td>{}</td></tr><tr><td>Email Address</td><td>{}</td></tr><tr><td>Phone Number</td><td>{}</td></tr><tr><td>{} Address</td><td>{}</td></tr></table></body></html>'.format(escaped_style, order_type, order_number, crypto_type, order_amount_crypto, fiat_type, order_amount_fiat, crypto_fees, total_amount, email_address, phone_number, crypto_type, crypto_address)
+    return table
+    
 
 
 class EmailFormatter:
@@ -7,6 +20,8 @@ class EmailFormatter:
     """
 
     def __init__(self, order_number, order_type, crypto_type, fiat_type, order_amount_crypto, order_amount_fiat, crypto_unit_price):
+        self.style = 'table {font-family: arial, sans-serif;border-collapse: collapse;width: 100%;}td, th {border: 1px solid #dddddd;text-align: left;padding: 8px;}tr:nth-child(even) {background-color: #dddddd;}'
+        self.escaped_style = html.escape(self.style)
         self.order_number = order_number
         self.order_type = order_type
         self.crypto_type = crypto_type
@@ -16,16 +31,16 @@ class EmailFormatter:
         self.crypto_unit_price = crypto_unit_price
 
     def buy_email(self, email_address, phone_number, crypto_fees, total_amount, crypto_address):
-        return "Order No. {}, \n type: {}, \n of crypto {}{} using {}{} at market price of {} per {}. Crypto transfer fees: {} totalling up to {} UGX. Client Email address is {},Phone Number is {} and Crypto Address is {}".format(self.order_number, self.order_type, self.order_amount_crypto, self.crypto_type, self.order_amount_fiat, self.fiat_type, self.crypto_unit_price, self.crypto_type, crypto_fees, total_amount, email_address, phone_number, crypto_address)
+        return '<!DOCTYPE html><html><head><style>{}</style></head><body><h2>  {} Order Number: {} </h2><table><tr><th>Order Detail</th><th>Order Amount</th></tr><tr><td>Crypto Type</td><td>{}</td></tr><tr><td>Crypto Amount</td><td>{}</td></tr><tr><td>Fiat Amount ({})</td><td>{}</td></tr><tr><td>Crypto Transaction Fees</td><td>{}</td></tr><tr><td>Total Amount</td><td>{}</td></tr><tr><td>Email Address</td><td>{}</td></tr><tr><td>Phone Number</td><td>{}</td></tr><tr><td>{} Address</td><td>{}</td></tr></table></body></html>'.format(self.escaped_style, self.order_type, self.order_number, self.crypto_type, self.order_amount_crypto, self.fiat_type, self.order_amount_fiat, crypto_fees, total_amount, email_address, phone_number, self.crypto_type, crypto_address)
 
     def client_buy_email(self, crypto_fees, total_amount):
-        return "Order No. {}, \n type: {}, \n of crypto {}{} \n using {}{} at market price of {} per {}. The Crypto transfer fees associated with this transaction are {} totalling up to {} UGX. Order has been confirmed. Please hold on as one of our agents contacts you.".format(self.order_number, self.order_type, self.order_amount_crypto, self.crypto_type, self.order_amount_fiat, self.fiat_type, self.crypto_unit_price, self.crypto_type, crypto_fees, total_amount)
+        return  '<!DOCTYPE html><html><head><style>{}</style></head><body><h2>  {} Order Number: {} </h2><table><tr><th>Order Detail</th><th>Order Amount</th></tr><tr><td>Crypto Type</td><td>{}</td></tr><tr><td>Crypto Amount</td><td>{}</td></tr><tr><td>Fiat Amount ({})</td><td>{}</td></tr><tr><td>Crypto Transaction Fees</td><td>{}</td></tr><tr><td>Total Amount</td><td>{}</td></tr></table></body></html>'.format(self.escaped_style, self.order_type, self.order_number, self.crypto_type, self.order_amount_crypto, self.fiat_type, self.order_amount_fiat, crypto_fees, total_amount)
 
     def sell_email(self, email_address, phone_number):
-        return "Order No. {}, type: {}, of crypto {}{} for {}{} at market price of {} per {}. Client Email address is {} and Phone Number is {}".format(self.order_number, self.order_type, self.order_amount_crypto, self.crypto_type, self.order_amount_fiat, self.fiat_type, self.crypto_unit_price, self.crypto_type, email_address, phone_number)
+        return '<!DOCTYPE html><html><head><style>{}</style></head><body><h2>  {} Order Number: {} </h2><table><tr><th>Order Detail</th><th>Order Amount</th></tr><tr><td>Crypto Type</td><td>{}</td></tr><tr><td>Crypto Amount</td><td>{}</td></tr><tr><td>Fiat Amount ({})</td><td>{}</td></tr><tr><td>Email Address</td><td>{}</td></tr><tr><td>Phone Number</td><td>{}</td></tr></table></body></html>'.format(self.escaped_style, self.order_type, self.order_number, self.crypto_type, self.order_amount_crypto, self.fiat_type, self.order_amount_fiat, email_address, phone_number)
 
     def client_sell_email(self):
-        return "Order No. {}, type: {}, of crypto {}{} for {}{} at market price of {} per {} confirmed. Please hold on as one of our agents contacts you.".format(self.order_number, self.order_type, self.order_amount_crypto, self.crypto_type, self.order_amount_fiat, self.fiat_type, self.crypto_unit_price, self.crypto_type)
+        return  '<!DOCTYPE html><html><head><style>{}</style></head><body><h2>  {} Order Number: {} </h2><table><tr><th>Order Detail</th><th>Order Amount</th></tr><tr><td>Crypto Type</td><td>{}</td></tr><tr><td>Crypto Amount</td><td>{}</td></tr><tr><td>Fiat Amount ({})</td><td>{}</td></tr></table></body></html>'.format(self.escaped_style, self.order_type, self.order_number, self.crypto_type, self.order_amount_crypto, self.fiat_type, self.order_amount_fiat)
 
 
 class PersonalEmailFormatter:
