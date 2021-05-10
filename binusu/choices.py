@@ -3,6 +3,12 @@ ORDER_TYPES = [
     ('SELL', 'SELL'),
 ]
 
+FEES = [
+    ('SLOW', 'SLOW'),
+    ('MEDIUM', 'MEDIUM'),
+    ('FAST', 'FAST')
+]
+
 CRYPTO_TYPES = [
     ('BTC', 'BTC'),
     ('ETH', 'ETH'),

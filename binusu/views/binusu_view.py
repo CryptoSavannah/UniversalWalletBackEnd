@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 
-from ..serializers.serializers import KycSerializer, KycConfirmSerializer, OrdersSerializer, EmailLogsSerializer, TelegramLogsSerializer, OrderReceiverSerializer, KycUserSerializer, PasswordResetSerializer, PasswordResetCreateSerializer, PasswordConfirmSerializer, OrdersDetailSerializer, OrdersUpdateSerializer
+from ..serializers.serializers import KycSerializer, KycConfirmSerializer, OrdersSerializer, EmailLogsSerializer, TelegramLogsSerializer, OrderReceiverSerializer, KycUserSerializer, PasswordResetSerializer, PasswordResetCreateSerializer, PasswordConfirmSerializer, OrdersDetailSerializer, OrdersUpdateSerializer, ClientOrderSerializer
 
 from ..helpers.helpers import get_random_alphanumeric_string
 from ..helpers.email_handler import EmailFormatter, PersonalEmailFormatter, email_structure
@@ -69,6 +69,14 @@ class ConfirmKyc(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class ClientOrdersView(APIView):
+    def post(self, request, format=None):
+        serializer = ClientOrderSerializer(data=request.data)
+        if serializer.is_valid():
+            orders_serializer = OrdersDetailSerializer(Orders.objects.filter(related_kyc=serializer.data["related_kyc"]), many=True)
+            return Response({"status":200, "data": orders_serializer.data}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class OrdersView(APIView):
     """
@@ -105,6 +113,7 @@ class OrdersView(APIView):
                     "crypto_unit_price": serializer.data['crypto_unit_price'],
                     "crypto_address": serializer.data['crypto_address'],
                     "crypto_fees": serializer.data['crypto_fees'],
+                    "crypto_fees_type": serializer.data['crypto_fees_type'],
                     "total_payable_amount_fiat": serializer.data['total_payable_amount_fiat'],
                     "warning": serializer.data['warning'],
                 }
@@ -121,9 +130,9 @@ class OrdersView(APIView):
 
                 if(order_serializer.data["order_type"]=="BUY"):
                     
-                    message = email_format.buy_email(user.email_address, user.phone_number, serializer.data['crypto_fees'], serializer.data['total_payable_amount_fiat'], serializer.data['crypto_address'])
+                    message = email_format.buy_email(user.email_address, user.phone_number, serializer.data['crypto_fees'], serializer.data['crypto_fees_type'], serializer.data['total_payable_amount_fiat'], serializer.data['crypto_address'])
 
-                    client_message = email_format.client_buy_email(serializer.data['crypto_fees'], serializer.data['total_payable_amount_fiat'])
+                    client_message = email_format.client_buy_email(serializer.data['crypto_fees'], serializer.data['crypto_fees_type'], serializer.data['total_payable_amount_fiat'])
 
                     telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated)
 
