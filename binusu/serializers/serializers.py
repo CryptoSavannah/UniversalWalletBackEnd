@@ -60,6 +60,7 @@ class OrderReceiverSerializer(serializers.Serializer):
     crypto_unit_price       =   serializers.DecimalField(max_digits=20, decimal_places=2)
     crypto_address          =   serializers.CharField(default=0)
     crypto_fees             =   serializers.DecimalField(max_digits=20, decimal_places=2, default=0)
+    crypto_fees_type           =   serializers.CharField(max_length=6, default="MEDIUM")
     total_payable_amount_fiat   =  serializers.DecimalField(max_digits=20, decimal_places=2, default=0)
     warning                 = serializers.IntegerField(default=0)
 
@@ -70,6 +71,13 @@ class OrdersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Orders
         fields = ('id', 'related_kyc', 'order_number', 'order_type', 'crypto_type', 'fiat_type', 'order_amount_crypto', 'order_amount_fiat', 'order_status', 'crypto_unit_price', 'crypto_address', 'crypto_fees', 'total_payable_amount_fiat', 'warning')
+
+class ClientOrderSerializer(serializers.Serializer):
+    """
+    Serializer for returning orders
+    """
+    related_kyc             =   serializers.IntegerField()
+
 
 class OrdersDetailSerializer(serializers.ModelSerializer):
     """

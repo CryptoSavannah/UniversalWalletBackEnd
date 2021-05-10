@@ -1,6 +1,6 @@
 from django.db import models
 from django import forms
-from .choices import ORDER_STATUS, ORDER_TYPES, FIAT_TYPES, CRYPTO_TYPES, EMAIL_STATUS, TELEGRAM_STATUS
+from .choices import ORDER_STATUS, ORDER_TYPES, FIAT_TYPES, CRYPTO_TYPES, EMAIL_STATUS, TELEGRAM_STATUS, FEES
 
 class Kyc(models.Model):
     first_name      = models.CharField(max_length=250)
@@ -49,6 +49,7 @@ class Orders(models.Model):
     order_amount_fiat           = models.DecimalField(max_digits=20, decimal_places=2)   
     crypto_address              = models.CharField(max_length=250, null=True, blank=True)
     crypto_fees                 = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    crypto_fees_type            = models.CharField(max_length=6, choices=FEES, null=True, blank=True)
     total_payable_amount_fiat   = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
     warning                     = models.IntegerField(default=0)
     order_status                = models.CharField(max_length=15, choices=ORDER_STATUS, default='UNFULFILLED')  
