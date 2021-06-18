@@ -298,39 +298,28 @@ class GetCurrentRates(APIView):
                     "FAST":rates_call[0]['fast']
                 },
                 "ETH":{
-                    "BUY":rates_call[1]['Buy'],
-                    "SELL":rates_call[1]['Sell'],
-                    "TRANSFER_FEE_CRYPTO":rates_call[1]['transfer_fee_crypt'],
-                    "TRANSFER_FEE_UGX":rates_call[1]['transfer_fee_ugx'],
-                    "MINIMUM_CRYPTO_AMOUNT":rates_call[1]['minimum_crypt'],
-                    "MINIMUM_UGX_AMOUNT":rates_call[1]['minimum_ugx'],
-                    "SLOW":rates_call[1]['slow'],
-                    "NORMAL":rates_call[1]['normal'],
-                    "FAST":rates_call[1]['fast']
+                    "BUY":rates_call[2]['Buy'],
+                    "SELL":rates_call[2]['Sell'],
+                    "TRANSFER_FEE_CRYPTO":rates_call[2]['transfer_fee_crypt'],
+                    "TRANSFER_FEE_UGX":rates_call[2]['transfer_fee_ugx'],
+                    "MINIMUM_CRYPTO_AMOUNT":rates_call[2]['minimum_crypt'],
+                    "MINIMUM_UGX_AMOUNT":rates_call[2]['minimum_ugx'],
+                    "SLOW":rates_call[2]['slow'],
+                    "NORMAL":rates_call[2]['normal'],
+                    "FAST":rates_call[2]['fast']
                 },
                 "CELO":{
-                    "BUY":rates_call[5]['Buy'],
-                    "SELL":rates_call[5]['Sell'],
-                    "TRANSFER_FEE_CRYPTO":rates_call[5]['transfer_fee_crypt'],
-                    "TRANSFER_FEE_UGX":rates_call[5]['transfer_fee_ugx'],
-                    "MINIMUM_CRYPTO_AMOUNT":rates_call[5]['minimum_crypt'],
-                    "MINIMUM_UGX_AMOUNT":rates_call[5]['minimum_ugx'],
-                    "SLOW":rates_call[5]['slow'],
-                    "NORMAL":rates_call[5]['normal'],
-                    "FAST":rates_call[5]['fast']
+                    "BUY":rates_call[6]['Buy'],
+                    "SELL":rates_call[6]['Sell'],
+                    "TRANSFER_FEE_CRYPTO":rates_call[6]['transfer_fee_crypt'],
+                    "TRANSFER_FEE_UGX":rates_call[6]['transfer_fee_ugx'],
+                    "MINIMUM_CRYPTO_AMOUNT":rates_call[6]['minimum_crypt'],
+                    "MINIMUM_UGX_AMOUNT":rates_call[6]['minimum_ugx'],
+                    "SLOW":rates_call[6]['slow'],
+                    "NORMAL":rates_call[6]['normal'],
+                    "FAST":rates_call[6]['fast']
                 },
                 "cUSD":{
-                    "BUY":rates_call[3]['Buy'],
-                    "SELL":rates_call[3]['Sell'],
-                    "TRANSFER_FEE_CRYPTO":rates_call[3]['transfer_fee_crypt'],
-                    "TRANSFER_FEE_UGX":rates_call[3]['transfer_fee_ugx'],
-                    "MINIMUM_CRYPTO_AMOUNT":rates_call[3]['minimum_crypt'],
-                    "MINIMUM_UGX_AMOUNT":rates_call[3]['minimum_ugx'],
-                    "SLOW":rates_call[3]['slow'],
-                    "NORMAL":rates_call[3]['normal'],
-                    "FAST":rates_call[3]['fast']
-                },
-                "BCH":{
                     "BUY":rates_call[4]['Buy'],
                     "SELL":rates_call[4]['Sell'],
                     "TRANSFER_FEE_CRYPTO":rates_call[4]['transfer_fee_crypt'],
@@ -341,16 +330,27 @@ class GetCurrentRates(APIView):
                     "NORMAL":rates_call[4]['normal'],
                     "FAST":rates_call[4]['fast']
                 },
+                "BCH":{
+                    "BUY":rates_call[5]['Buy'],
+                    "SELL":rates_call[5]['Sell'],
+                    "TRANSFER_FEE_CRYPTO":rates_call[5]['transfer_fee_crypt'],
+                    "TRANSFER_FEE_UGX":rates_call[5]['transfer_fee_ugx'],
+                    "MINIMUM_CRYPTO_AMOUNT":rates_call[5]['minimum_crypt'],
+                    "MINIMUM_UGX_AMOUNT":rates_call[5]['minimum_ugx'],
+                    "SLOW":rates_call[5]['slow'],
+                    "NORMAL":rates_call[5]['normal'],
+                    "FAST":rates_call[5]['fast']
+                },
                 "LTC":{
-                    "BUY":rates_call[2]['Buy'],
-                    "SELL":rates_call[2]['Sell'],
-                    "TRANSFER_FEE_CRYPTO":rates_call[2]['transfer_fee_crypt'],
-                    "TRANSFER_FEE_UGX":rates_call[2]['transfer_fee_ugx'],
-                    "MINIMUM_CRYPTO_AMOUNT":rates_call[2]['minimum_crypt'],
-                    "MINIMUM_UGX_AMOUNT":rates_call[2]['minimum_ugx'],
-                    "SLOW":rates_call[2]['slow'],
-                    "NORMAL":rates_call[2]['normal'],
-                    "FAST":rates_call[2]['fast']
+                    "BUY":rates_call[3]['Buy'],
+                    "SELL":rates_call[3]['Sell'],
+                    "TRANSFER_FEE_CRYPTO":rates_call[3]['transfer_fee_crypt'],
+                    "TRANSFER_FEE_UGX":rates_call[3]['transfer_fee_ugx'],
+                    "MINIMUM_CRYPTO_AMOUNT":rates_call[3]['minimum_crypt'],
+                    "MINIMUM_UGX_AMOUNT":rates_call[3]['minimum_ugx'],
+                    "SLOW":rates_call[3]['slow'],
+                    "NORMAL":rates_call[3]['normal'],
+                    "FAST":rates_call[3]['fast']
                 }
             }
             return Response({"status":200, "data":rates_data})
