@@ -22,6 +22,7 @@ class LoyaltyUserView(APIView):
 
 
 class LoyaltyUserSpecificView(APIView):
+    
     """
     Actions that can be performed on a specific loyalty user
     """
