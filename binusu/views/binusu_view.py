@@ -155,7 +155,7 @@ class OrdersView(APIView):
 
                     client_message = email_format.client_sell_email()
 
-                    telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated, user.email_address, user.phone_number)
+                    telegram_message = telegram_sell_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated, user.email_address, user.phone_number)
 
                     try:
                         # send_order_email("Crypto Sell Order", message, "twhy.brian@gmail.com")
