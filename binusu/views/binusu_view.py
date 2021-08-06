@@ -285,8 +285,12 @@ class ConfirmPasswordReset(APIView):
 
 class GetCurrentRates(APIView):
     def get(self, request, format=None):
+        currency = request.GET.get('currencySymbol', '')
         try:
-            rates_call = get_rates()
+            if(currency=="KES"):
+                rates_call = get_rates("KES")
+            else:
+                rates_call = get_rates("UGX")
             rates_json = {}
             for currency in rates_call:
                 if currency["currencyName"] == "Bitcoin":
@@ -373,5 +377,5 @@ class GetCurrentRates(APIView):
                 }
             }
             return Response({"status":200, "data":rates_data})
-        except:
-             return Response({"status":404, "error":"Rates currently unavailable"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"status":404, "error":"Rates currently unavailable"}, status=status.HTTP_404_NOT_FOUND)
