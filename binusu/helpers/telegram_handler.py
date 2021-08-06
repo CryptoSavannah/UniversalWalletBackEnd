@@ -25,7 +25,7 @@ def telegram_buy_message(order_number, order_type, crypto_type, fiat_type, order
 
 
 def telegram_sell_message(order_number, order_type, crypto_type, fiat_type, order_amount_crypto, order_amount_fiat, crypto_unit_price, email_address, phone_number):
-    return "Order No. {}, \n type: {}, \n of crypto {}{} \n using {}{} \n at market price of {} per {}. Customer Email Address is {} and Phone number is {}. ".format(order_number, order_type, order_amount_crypto, crypto_type, order_amount_fiat, fiat_type, crypto_unit_price, crypto_type)
+    return "Order No. {}, \n type: {}, \n of crypto {}{} \n using {}{} \n at market price of {} per {}. Customer Email Address is {} and Phone number is {}. ".format(order_number, order_type, order_amount_crypto, crypto_type, order_amount_fiat, fiat_type, crypto_unit_price, crypto_type, email_address, phone_number)
 
 def telegram_error_message(e):
     return "{}".format(e)
