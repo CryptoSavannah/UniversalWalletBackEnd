@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Kyc, Orders, EmailLogs, TelegramLogs, PasswordResets
+from ..models import Kyc, Orders, EmailLogs, TelegramLogs, PasswordResets, OrderCompletions
 from ..serializers.account_serializer import UserDetailSerializer
 
 
@@ -26,7 +26,7 @@ class KycUserSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Kyc
-        fields = ('id', 'first_name', 'last_name', 'email_address', 'date_submitted')
+        fields = ('id', 'first_name', 'last_name', 'email_address', 'phone_number', 'date_submitted')
 
 class KycConfirmSerializer(serializers.Serializer):
     """
@@ -114,3 +114,35 @@ class TelegramLogsSerializer(serializers.ModelSerializer):
     class Meta:
         model = TelegramLogs
         fields = ('related_order_telegram', 'telegeam_message', 'status', 'date_dispatched')
+
+class OrderCompletionsCreateSerializer(serializers.ModelSerializer):
+    """
+    Model serializer for Order Completions
+    """
+    class Meta:
+        model = OrderCompletions
+        fields = ('related_order', 'currency', 'amount', 'invoice_number', 'pay_id')
+
+class OrderCompletionsDetailSerializer(serializers.ModelSerializer):
+    """
+    Model serializer for Order Completions Details
+    """
+    class Meta:
+        model = OrderCompletions
+        fields = ('related_order', 'currency', 'amount', 'invoice_number', 'pay_id', 'completion_status', 'time_completed', 'disbursement_status', 'time_disbursed')
+
+
+class OrderCompletionSerializer(serializers.Serializer):
+    """
+    Serializer for returning orders
+    """
+    related_order             =   serializers.IntegerField()
+
+
+class OrderCompletionUpdateSerializer(serializers.Serializer):
+    """
+    Serializer for order updates
+    """
+    pay_id   =  serializers.CharField(max_length=250)
+    api_key  =  serializers.CharField(max_length=250)
+    status   =  serializers.IntegerField()   

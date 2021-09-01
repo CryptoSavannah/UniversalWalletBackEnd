@@ -2,20 +2,20 @@ import hashlib
 import jwt
 import json
 from loyalty_api.settings import SECRET_KEY
-from ..models import Kyc, Orders, EmailLogs, TelegramLogs, PasswordResets, AccountUser
+from ..models import Kyc, Orders, EmailLogs, TelegramLogs, PasswordResets, AccountUser, OrderCompletions
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 
-from ..serializers.serializers import KycSerializer, KycConfirmSerializer, OrdersSerializer, EmailLogsSerializer, TelegramLogsSerializer, OrderReceiverSerializer, KycUserSerializer, PasswordResetSerializer, PasswordResetCreateSerializer, PasswordConfirmSerializer, OrdersDetailSerializer, OrdersUpdateSerializer, ClientOrderSerializer
+from ..serializers.serializers import KycSerializer, KycConfirmSerializer, OrdersSerializer, EmailLogsSerializer, TelegramLogsSerializer, OrderReceiverSerializer, KycUserSerializer, PasswordResetSerializer, PasswordResetCreateSerializer, PasswordConfirmSerializer, OrdersDetailSerializer, OrdersUpdateSerializer, ClientOrderSerializer, OrderCompletionsCreateSerializer, OrderCompletionsDetailSerializer, OrderCompletionSerializer, OrderCompletionUpdateSerializer
 
 from ..helpers.helpers import get_random_alphanumeric_string
 from ..helpers.email_handler import EmailFormatter, PersonalEmailFormatter, email_structure
 from ..helpers.telegram_handler import send_telegram, telegram_buy_message, telegram_sell_message, send_error_telegram, telegram_error_message
 from ..helpers.baluwa import send_order_email
-from ..helpers.rates import get_rates
+from ..helpers.rates import get_rates, trigger_collection
 
 class KycListView(APIView):
     """
@@ -159,7 +159,7 @@ class OrdersView(APIView):
 
                     try:
                         # send_order_email("Crypto Sell Order", message, "twhy.brian@gmail.com")
-                        #comment
+                        # comment
 
                         # send_order_email("Crypto Sell Order", message, "arinrony@gmail.com")
 
@@ -379,3 +379,71 @@ class GetCurrentRates(APIView):
             return Response({"status":200, "data":rates_data})
         except Exception as e:
             return Response({"status":404, "error":"Rates currently unavailable"}, status=status.HTTP_404_NOT_FOUND)
+
+class GetSpecificOrderDetails(APIView):
+    def post(self, request, format=None):
+        serializer = OrderCompletionSerializer(data=request.data)
+        if serializer.is_valid():
+            order = Orders.objects.get(id=serializer.data["related_order"])
+
+            return Response({"status":200, "data": OrdersDetailSerializer(order).data}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class OrderCompletionCollection(APIView):
+    def post(self, request, format=None):
+        serializer = OrderCompletionSerializer(data=request.data)
+        if serializer.is_valid():
+            order = Orders.objects.get(id=serializer.data["related_order"])
+            kyc = Kyc.objects.get(id=order.related_kyc.id)
+            formated_number = kyc.phone_number[1:]
+            reconstructed_number = "{}{}".format("256", formated_number)
+            if(order.order_status == "UNFULFILLED"):
+                data = {
+                    "wal_api_key": "fd9c876846b89736a8c3ecde15931c24fed9a10b4e3767af04361913ee671c09",
+                    "method": "bms_deposit",
+                    "payid": order.order_number,
+                    "currency": "UG-MM",
+                    "amount": float(order.total_payable_amount_fiat),
+                    "format": "JSON",
+                    "email": kyc.email_address,
+                    "notes": reconstructed_number
+                }
+                
+                try:
+                    call = trigger_collection(data)
+                    order_completion_data = {
+                        'related_order':order.id,
+                        'currency':call["Response"]["currency"],
+                        'amount':call["Response"]["amount_to_transfer"],
+                        'invoice_number':call["Response"]["invoiceNo"],
+                        'pay_id':call["Response"]["payment_id"],
+                    }
+
+                    order_completion_serializer = OrderCompletionsCreateSerializer(data=order_completion_data)
+                    order_completion_serializer.is_valid(raise_exception=True)
+                    order_completion_serializer.save()
+                    return Response({"status":200, "data": order_completion_serializer.data}, status=status.HTTP_200_OK)
+                except Exception as e:
+                    send_error_telegram(e)
+                    return Response({"status":424, "error":"Service Unavailable due to failed dependency"}, status=status.HTTP_424_FAILED_DEPENDENCY)
+            return Response({"status":404, "error":"OPEN OPRDER NOT FOUND"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateOrderCompletionStatus(APIView):
+    def post(self, request, format=None):
+        serializer = OrderCompletionUpdateSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                related_completion = OrderCompletions.objects.get(pay_id=serializer.data["pay_id"])
+                if(related_completion.completion_status==False and serializer.data["status"] == 1):
+
+                    OrderCompletions.objects.update_or_create(
+                    id=related_completion.id, defaults={'completion_status':True}
+                    )
+
+                    return Response({"status":200, "message":"Successfully Updated"}, status=status.HTTP_200_OK)
+                return Response({"status":404, "error": "Transaction Already Updated"})
+            except:
+                return Response({"status":404, "error":"User doesnt have valid KYC"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

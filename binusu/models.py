@@ -61,6 +61,18 @@ class Orders(models.Model):
     class Meta:
         ordering = ["-id"]
 
+class OrderCompletions(models.Model):
+    related_order       =   models.ForeignKey(Orders, on_delete=models.CASCADE, related_name="related_order")
+    currency            =   models.CharField(max_length=8)
+    amount              =   models.DecimalField(max_digits=20, decimal_places=2)
+    invoice_number      =   models.CharField(max_length=8)
+    pay_id              =   models.CharField(max_length=250)
+    completion_status   =   models.BooleanField(default=False)
+    time_completed      =   models.DateTimeField(auto_now_add=False, null=True, blank=True)
+    disbursement_status =   models.BooleanField(default=False)
+    time_disbursed      =   models.DateTimeField(auto_now_add=False, null=True, blank=True)
+    date_ordered        =   models.DateTimeField(auto_now_add=True)
+
 class EmailLogs(models.Model):
     related_order_email = models.ForeignKey(Orders, on_delete=models.CASCADE, related_name="order_related_email")
     support_email       = models.CharField(max_length=250)
