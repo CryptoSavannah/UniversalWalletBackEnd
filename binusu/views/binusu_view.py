@@ -159,7 +159,6 @@ class OrdersView(APIView):
 
                     try:
                         send_order_email("Crypto Sell Order", message, "twhy.brian@gmail.com")
-                        comment
 
                         send_order_email("Crypto Sell Order", message, "arinrony@gmail.com")
 
