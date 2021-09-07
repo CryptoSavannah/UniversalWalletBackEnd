@@ -138,11 +138,11 @@ class OrdersView(APIView):
                     telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated, serializer.data['crypto_fees'], user.email_address, user.phone_number)
 
                     try:
-                        # send_order_email("Crypto Buy Order", message, "twhy.brian@gmail.com")
+                        send_order_email("Crypto Buy Order", message, "twhy.brian@gmail.com")
 
-                        # send_order_email("Crypto Buy Order", message, "arinrony@gmail.com")
+                        send_order_email("Crypto Buy Order", message, "arinrony@gmail.com")
 
-                        # send_order_email("Cryptocurreny Purchase order from Binusu", client_message, user.email_address)
+                        send_order_email("Cryptocurreny Purchase order from Binusu", client_message, user.email_address)
 
                         send_telegram(telegram_message)
 
@@ -158,12 +158,12 @@ class OrdersView(APIView):
                     telegram_message = telegram_sell_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated, user.email_address, user.phone_number)
 
                     try:
-                        # send_order_email("Crypto Sell Order", message, "twhy.brian@gmail.com")
-                        # comment
+                        send_order_email("Crypto Sell Order", message, "twhy.brian@gmail.com")
+                        comment
 
-                        # send_order_email("Crypto Sell Order", message, "arinrony@gmail.com")
+                        send_order_email("Crypto Sell Order", message, "arinrony@gmail.com")
 
-                        # send_order_email("Cryptocurreny Sell order from Binusu", client_message, user.email_address)
+                        send_order_email("Cryptocurreny Sell order from Binusu", client_message, user.email_address)
 
                         send_telegram(telegram_message)
                     except Exception as e:
