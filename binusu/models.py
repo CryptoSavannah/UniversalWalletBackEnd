@@ -65,6 +65,11 @@ class OrderCompletions(models.Model):
     related_order       =   models.ForeignKey(Orders, on_delete=models.CASCADE, related_name="related_order")
     currency            =   models.CharField(max_length=8)
     amount              =   models.DecimalField(max_digits=20, decimal_places=2)
+    # amount_received     =   
+    # network_txid        =
+    # network_confirmations   =
+    # bnu_unvaulted       =
+    # bnu_txid            =
     invoice_number      =   models.CharField(max_length=8)
     pay_id              =   models.CharField(max_length=250)
     completion_status   =   models.BooleanField(default=False)
