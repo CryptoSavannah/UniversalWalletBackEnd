@@ -143,6 +143,7 @@ class OrderCompletionUpdateSerializer(serializers.Serializer):
     """
     Serializer for order updates
     """
-    pay_id   =  serializers.CharField(max_length=250)
-    api_key  =  serializers.CharField(max_length=250)
-    status   =  serializers.IntegerField()   
+    pay_id      =  serializers.CharField(max_length=250)
+    errorCode   =  serializers.IntegerField() 
+    status      =  serializers.IntegerField()  
+    data        =  serializers.JSONField()
