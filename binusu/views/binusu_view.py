@@ -444,14 +444,14 @@ class UpdateOrderCompletionStatus(APIView):
         if serializer.is_valid():
             try:
                 related_completion = OrderCompletions.objects.get(pay_id=serializer.data["pay_id"])
-                if(related_completion.completion_status==False and serializer.data["status"] == 1):
+                if(related_completion.completion_status==False and serializer.data["status"] == 0):
 
                     OrderCompletions.objects.update_or_create(
                     id=related_completion.id, defaults={'completion_status':True}
                     )
 
                     return Response({"status":200, "message":"Successfully Updated"}, status=status.HTTP_200_OK)
-                if(related_completion.completion_status==False and serializer.data["status"] == 0):
+                if(related_completion.completion_status==False and serializer.data["status"] == 1):
 
                     OrderCompletions.objects.update_or_create(
                     id=related_completion.id, defaults={'callback_response':False}
