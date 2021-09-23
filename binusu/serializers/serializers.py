@@ -127,6 +127,7 @@ class OrderCompletionsDetailSerializer(serializers.ModelSerializer):
     """
     Model serializer for Order Completions Details
     """
+    related_order = OrdersDetailSerializer(read_only=True)
     class Meta:
         model = OrderCompletions
         fields = ('related_order', 'currency', 'amount', 'invoice_number', 'pay_id', 'completion_status', 'time_completed', 'disbursement_status', 'time_disbursed')

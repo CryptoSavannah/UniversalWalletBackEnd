@@ -429,6 +429,15 @@ class OrderCompletionCollection(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class ClientOrderCompletionView(APIView):
+    def post(self, request, format=None):
+        serializer = OrderCompletionSerializer(data=request.data)
+        if serializer.is_valid():
+            order_completion_serializer = OrderCompletionsDetailSerializer(OrderCompletions.objects.filter(related_order=serializer.data["related_order"]), many=True)
+            return Response({"status":200, "data": order_completion_serializer.data}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class UpdateOrderCompletionStatus(APIView):
     def post(self, request, format=None):
         serializer = OrderCompletionUpdateSerializer(data=request.data)
@@ -439,6 +448,13 @@ class UpdateOrderCompletionStatus(APIView):
 
                     OrderCompletions.objects.update_or_create(
                     id=related_completion.id, defaults={'completion_status':True}
+                    )
+
+                    return Response({"status":200, "message":"Successfully Updated"}, status=status.HTTP_200_OK)
+                if(related_completion.completion_status==False and serializer.data["status"] == 0):
+
+                    OrderCompletions.objects.update_or_create(
+                    id=related_completion.id, defaults={'callback_response':False}
                     )
 
                     return Response({"status":200, "message":"Successfully Updated"}, status=status.HTTP_200_OK)

@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views.binusu_view import KycListView, OrdersView, ConfirmKyc, ResetPassword, ConfirmPasswordReset, GetCurrentRates, OrdersStatistics, UpdateOrderDetails, ClientOrdersView, OrderCompletionCollection, GetSpecificOrderDetails, UpdateOrderCompletionStatus
+from .views.binusu_view import KycListView, OrdersView, ConfirmKyc, ResetPassword, ConfirmPasswordReset, GetCurrentRates, OrdersStatistics, UpdateOrderDetails, ClientOrdersView, OrderCompletionCollection, GetSpecificOrderDetails, UpdateOrderCompletionStatus, ClientOrderCompletionView
 from .views.account_view import UserListView, UserLoginView, UserConfirmAccount
 
 urlpatterns = [
@@ -11,6 +11,7 @@ urlpatterns = [
     path('binusu/orders/specific', GetSpecificOrderDetails.as_view(), name="binusu-orders-specific"),
     path('binusu/orders/stats', OrdersStatistics.as_view(), name="binusu-orders-stats"),
     path('binusu/orders/clients', ClientOrdersView.as_view(), name="binusu-clients-orders"),
+    path('binusu/orders/completion', ClientOrderCompletionView.as_view(), name="binusu-clients-orders-completion"),
     path('binusu/orders/update', UpdateOrderDetails.as_view(), name="binusu-orders-update"),
     path('binusu/password_reset', ResetPassword.as_view(), name="binusu_password_reset"),
     path('binusu/confirm_reset', ConfirmPasswordReset.as_view(), name="binusu_confirm_reset"),
