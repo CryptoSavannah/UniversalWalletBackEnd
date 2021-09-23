@@ -65,14 +65,15 @@ class OrderCompletions(models.Model):
     related_order       =   models.ForeignKey(Orders, on_delete=models.CASCADE, related_name="related_order")
     currency            =   models.CharField(max_length=8)
     amount              =   models.DecimalField(max_digits=20, decimal_places=2)
-    # amount_received     =   
-    # network_txid        =
-    # network_confirmations   =
-    # bnu_unvaulted       =
-    # bnu_txid            =
+    amount_received     =   models.CharField(max_length=10, blank=True, null=True)
+    network_txid        =   models.CharField(max_length=10, blank=True, null=True)
+    network_confirmations   =   models.IntegerField(null=True, blank=True)
+    bnu_unvaulted       =   models.CharField(max_length=10, blank=True, null=True)
+    bnu_txid            =   models.CharField(max_length=10, blank=True, null=True)
     invoice_number      =   models.CharField(max_length=8)
     pay_id              =   models.CharField(max_length=250)
     completion_status   =   models.BooleanField(default=False)
+    callback_response   =   models.BooleanField(default=True)
     time_completed      =   models.DateTimeField(auto_now_add=False, null=True, blank=True)
     disbursement_status =   models.BooleanField(default=False)
     time_disbursed      =   models.DateTimeField(auto_now_add=False, null=True, blank=True)
