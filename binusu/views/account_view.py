@@ -19,7 +19,6 @@ class UserListView(APIView):
     """
     List all users and create a new user object
     """
-
     def get(self, request, format=None):
         serializer = UserDetailSerializer(AccountUser.objects.filter(active=True), many=True)
         return Response({"status":200, "data":serializer.data}, status=status.HTTP_200_OK)
