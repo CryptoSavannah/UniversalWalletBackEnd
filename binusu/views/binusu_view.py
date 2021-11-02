@@ -306,6 +306,8 @@ class GetCurrentRates(APIView):
                     rates_json["BCH"]=currency
                 if currency["currencyName"] == "CELO":
                     rates_json["CELO"]=currency
+                if currency["currencyName"] == "MYST":
+                    rates_json["MYST"]=currency
 
             rates_data = {
                 "BTC":{
@@ -373,6 +375,17 @@ class GetCurrentRates(APIView):
                     "SLOW":rates_json['LTC']['slow'],
                     "NORMAL":rates_json['LTC']['normal'],
                     "FAST":rates_json['LTC']['fast']
+                },
+                "MYST":{
+                    "BUY":rates_json['MYST']['Buy'],
+                    "SELL":rates_json['MYST']['Sell'],
+                    "TRANSFER_FEE_CRYPTO":rates_json['MYST']['transfer_fee_crypt'],
+                    "TRANSFER_FEE_UGX":rates_json['MYST']['transfer_fee_ugx'],
+                    "MINIMUM_CRYPTO_AMOUNT":rates_json['MYST']['minimum_crypt'],
+                    "MINIMUM_UGX_AMOUNT":rates_json['MYST']['minimum_ugx'],
+                    "SLOW":rates_json['MYST']['slow'],
+                    "NORMAL":rates_json['MYST']['normal'],
+                    "FAST":rates_json['MYST']['fast']
                 }
             }
             return Response({"status":200, "data":rates_data})
