@@ -1,11 +1,12 @@
 from django.urls import path, include
-from .views.binusu_view import KycListView, OrdersView, ConfirmKyc, ResetPassword, ConfirmPasswordReset, GetCurrentRates, OrdersStatistics, UpdateOrderDetails, ClientOrdersView, OrderCompletionCollection, GetSpecificOrderDetails, UpdateOrderCompletionStatus, ClientOrderCompletionView
+from .views.binusu_view import KycListView, OrdersView, ConfirmKyc, ResetPassword, ConfirmPasswordReset, GetCurrentRates, OrdersStatistics, UpdateOrderDetails, ClientOrdersView, OrderCompletionCollection, GetSpecificOrderDetails, UpdateOrderCompletionStatus, ClientOrderCompletionView, TenantsOrdersView
 from .views.account_view import UserListView, UserLoginView, UserConfirmAccount
 
 urlpatterns = [
     path('binusu/kyc', KycListView.as_view(), name="binusu-kyc"),
     path('binusu/verify_kyc', ConfirmKyc.as_view(), name="binusu-verify-kyc"),
     path('binusu/orders', OrdersView.as_view(), name="binusu-orders"),
+    path('binusu/tenants/orders', TenantsOrdersView.as_view(), name="binusu-tenant-orders"),
     path('binusu/orders/collection', OrderCompletionCollection.as_view(), name="binusu-orders-collection"),
     path('binusu/orders/collection/update', UpdateOrderCompletionStatus.as_view(), name="binusu-orders-collection-update"),
     path('binusu/orders/specific', GetSpecificOrderDetails.as_view(), name="binusu-orders-specific"),

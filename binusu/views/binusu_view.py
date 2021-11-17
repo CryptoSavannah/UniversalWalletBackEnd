@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 
-from ..serializers.serializers import KycSerializer, KycConfirmSerializer, OrdersSerializer, EmailLogsSerializer, TelegramLogsSerializer, OrderReceiverSerializer, KycUserSerializer, PasswordResetSerializer, PasswordResetCreateSerializer, PasswordConfirmSerializer, OrdersDetailSerializer, OrdersUpdateSerializer, ClientOrderSerializer, OrderCompletionsCreateSerializer, OrderCompletionsDetailSerializer, OrderCompletionSerializer, OrderCompletionUpdateSerializer
+from ..serializers.serializers import KycSerializer, KycConfirmSerializer, OrdersSerializer, EmailLogsSerializer, TelegramLogsSerializer, OrderReceiverSerializer, KycUserSerializer, PasswordResetSerializer, PasswordResetCreateSerializer, PasswordConfirmSerializer, OrdersDetailSerializer, OrdersUpdateSerializer, ClientOrderSerializer, OrderCompletionsCreateSerializer, OrderCompletionsDetailSerializer, OrderCompletionSerializer, OrderCompletionUpdateSerializer, TenantOrderReceiverSerializer
 
 from ..helpers.helpers import get_random_alphanumeric_string
 from ..helpers.email_handler import EmailFormatter, PersonalEmailFormatter, email_structure
@@ -175,6 +175,157 @@ class OrdersView(APIView):
                 return Response({"status":404, "error":"User doesnt have valid KYC"}, status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class TenantsOrdersView(APIView):
+    """
+    List all and create a new order
+    """
+
+    def post(self, request, format=None):
+        serializer = TenantOrderReceiverSerializer(data=request.data)
+        if serializer.is_valid():
+
+            order_number = "{}".format(get_random_alphanumeric_string(10))
+
+            rates_call = get_rates("UGX")
+            rates_json = {}
+            for currency in rates_call:
+                if currency["currencyName"] == "Bitcoin":
+                    rates_json["BTC"]=currency
+                if currency["currencyName"] == "Binusu":
+                    rates_json["BNU"]=currency
+                if currency["currencyName"] == "Ether":
+                    rates_json["ETH"]=currency
+                if currency["currencyName"] == "Litecoin":
+                    rates_json["LTC"]=currency
+                if currency["currencyName"] == "Celo Dollar":
+                    rates_json["CUSD"]=currency
+                if currency["currencyName"] == "Bitcoin Cash":
+                    rates_json["BCH"]=currency
+                if currency["currencyName"] == "CELO":
+                    rates_json["CELO"]=currency
+                if currency["currencyName"] == "MYST":
+                    rates_json["MYST"]=currency
+
+            try: 
+                user = Kyc.objects.get(id=int(serializer.data['related_kyc']))
+
+                if(serializer.data["order_type"]=="BUY"):
+
+                    crypto_unit_price = rates_json[serializer.data['crypto_type']]['Sell']
+
+                    crypto_fees = rates_json[serializer.data['crypto_type']]['fast']
+
+                    order_amount_minus_fees = float(serializer.data['order_amount']) - float(crypto_fees)
+
+                    order_amount_crypto = float(serializer.data['order_amount'])/float(crypto_unit_price)
+
+
+                    order_data = {
+                    "order_number": order_number,
+                    "related_kyc": serializer.data['related_kyc'],
+                    "order_type": serializer.data['order_type'],
+                    "crypto_type": serializer.data['crypto_type'],
+                    "fiat_type":    serializer.data['fiat_type'],
+                    "order_amount_crypto": round(order_amount_crypto, 10),
+                    "order_amount_fiat": round(float(serializer.data['order_amount']), 2),
+                    "order_status": "UNFULFILLED",
+                    "crypto_unit_price": round(float(crypto_unit_price), 2),
+                    "crypto_address": serializer.data['crypto_address'],
+                    "crypto_fees": round(float(crypto_fees), 2),
+                    "crypto_fees_type": 'FAST',
+                    "total_payable_amount_fiat": order_amount_minus_fees,
+                    "warning": 0,
+                    }
+
+                    order_serializer = OrdersSerializer(data=order_data)
+                    order_serializer.is_valid(raise_exception=True)
+                    order_serializer.save()
+
+                    order_amount_formated = "{:0,.2f}".format(float(order_serializer.data["total_payable_amount_fiat"]))
+
+                    crypto_unit_formated = "{:0,.2f}".format(float(order_serializer.data["crypto_unit_price"]))
+
+                    email_format = EmailFormatter(order_number, serializer.data["order_type"], serializer.data["crypto_type"], serializer.data["fiat_type"], 0, order_amount_formated, crypto_unit_formated)
+                    
+                    message = email_format.buy_email(user.email_address, user.phone_number, crypto_fees, 'FAST', order_amount_minus_fees, serializer.data['crypto_address'])
+
+                    client_message = email_format.client_buy_email(crypto_fees, 'FAST', order_amount_minus_fees)
+
+                    telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_fiat"], order_amount_formated, crypto_unit_formated, 'FAST', user.email_address, user.phone_number)
+
+                    try:
+                        # send_order_email("Crypto Buy Order", message, "twhy.brian@gmail.com")
+
+                        # send_order_email("Crypto Buy Order", message, "arinrony@gmail.com")
+
+                        send_order_email("Crypto Buy Order", message, "kapsonkatongole@gmail.com")
+
+                        send_order_email("Cryptocurreny Purchase order from Binusu", client_message, user.email_address)
+
+                        send_telegram(telegram_message)
+
+                    except Exception as e:
+                        send_error_telegram(e)
+                        return Response({"status":424, "error":"Service Unavailable due to failed dependency"}, status=status.HTTP_424_FAILED_DEPENDENCY)
+
+                
+                else:
+                    
+                    crypto_unit_price = rates_json[serializer.data['crypto_type']]['Buy']
+
+                    order_amount_fiat = float(serializer.data['order_amount'])*float(crypto_unit_price)
+
+                    order_data = {
+                    "order_number": order_number,
+                    "related_kyc": serializer.data['related_kyc'],
+                    "order_type": serializer.data['order_type'],
+                    "crypto_type": serializer.data['crypto_type'],
+                    "fiat_type":    serializer.data['fiat_type'],
+                    "order_amount_crypto": round(float((serializer.data['order_amount'])), 10),
+                    "order_amount_fiat": round(float(order_amount_fiat), 2),
+                    "order_status": "UNFULFILLED",
+                    "crypto_unit_price": round(float(crypto_unit_price), 2),
+                    "crypto_address": serializer.data['crypto_address'],
+                    "crypto_fees": 0,
+                    "crypto_fees_type": 'FAST',
+                    "total_payable_amount_fiat": round(order_amount_fiat,2),
+                    "warning": 0,
+                    }
+
+                    order_serializer = OrdersSerializer(data=order_data)
+                    order_serializer.is_valid(raise_exception=True)
+                    order_serializer.save()
+
+                    order_amount_formated = "{:0,.2f}".format(float(order_serializer.data["total_payable_amount_fiat"]))
+
+                    crypto_unit_formated = "{:0,.2f}".format(float(order_serializer.data["crypto_unit_price"]))
+
+                    email_format = EmailFormatter(order_number, serializer.data["order_type"], serializer.data["crypto_type"], serializer.data["fiat_type"], 0, order_amount_formated, crypto_unit_formated)
+
+                    message = email_format.sell_email(user.email_address, user.phone_number)
+
+                    client_message = email_format.client_sell_email()
+
+                    telegram_message = telegram_sell_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_crypto"], order_amount_formated, crypto_unit_formated, user.email_address, user.phone_number)
+
+                    try:
+                        # send_order_email("Crypto Sell Order", message, "twhy.brian@gmail.com")
+
+                        # send_order_email("Crypto Sell Order", message, "arinrony@gmail.com")
+
+                        send_order_email("Cryptocurreny Sell order from Binusu", client_message, user.email_address)
+
+                        send_telegram(telegram_message)
+                    except Exception as e:
+                        send_error_telegram(e)
+                        return Response({"status":424, "error":"Service Unavailable due to failed dependency"}, status=status.HTTP_424_FAILED_DEPENDENCY)
+
+                return Response({"status":201, "data":order_serializer.data}, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                send_error_telegram(e)
+                return Response({"status":404, "error":"User doesnt have valid KYC"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UpdateOrderDetails(APIView):
 
