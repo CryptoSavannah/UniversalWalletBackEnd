@@ -64,6 +64,18 @@ class OrderReceiverSerializer(serializers.Serializer):
     total_payable_amount_fiat   =  serializers.DecimalField(max_digits=20, decimal_places=2, default=0)
     warning                 = serializers.IntegerField(default=0)
 
+class TenantOrderReceiverSerializer(serializers.Serializer):
+    """
+    Serializer for receiving tenant orders
+    """
+    related_kyc             =   serializers.IntegerField()
+    order_type              =   serializers.CharField(max_length=250)
+    crypto_type             =   serializers.CharField(max_length=250)
+    fiat_type               =   serializers.CharField(max_length=250)
+    order_amount            =   serializers.DecimalField(max_digits=15, decimal_places=6)
+    crypto_address          =   serializers.CharField(default=0)
+
+
 class OrdersSerializer(serializers.ModelSerializer):
     """
     Model Serializer for the Orders
