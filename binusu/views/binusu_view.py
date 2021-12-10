@@ -218,7 +218,7 @@ class TenantsOrdersView(APIView):
 
                     order_amount_minus_fees = float(serializer.data['order_amount']) - float(crypto_fees)
 
-                    order_amount_crypto = float(serializer.data['order_amount'])/float(crypto_unit_price)
+                    order_amount_crypto = order_amount_minus_fees/float(crypto_unit_price)
 
 
                     order_data = {
@@ -246,13 +246,13 @@ class TenantsOrdersView(APIView):
 
                     crypto_unit_formated = "{:0,.2f}".format(float(order_serializer.data["crypto_unit_price"]))
 
-                    email_format = EmailFormatter(order_number, serializer.data["order_type"], serializer.data["crypto_type"], serializer.data["fiat_type"], 0, order_amount_formated, crypto_unit_formated)
+                    email_format = EmailFormatter(order_number, serializer.data["order_type"], serializer.data["crypto_type"], serializer.data["fiat_type"], order_serializer.data['order_amount_crypto'], order_amount_formated, crypto_unit_formated)
                     
                     message = email_format.buy_email(user.email_address, user.phone_number, crypto_fees, 'FAST', order_amount_minus_fees, serializer.data['crypto_address'])
 
                     client_message = email_format.client_buy_email(crypto_fees, 'FAST', order_amount_minus_fees)
 
-                    telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_serializer.data["order_amount_fiat"], order_amount_formated, crypto_unit_formated, 'FAST', user.email_address, user.phone_number)
+                    telegram_message = telegram_buy_message(order_serializer.data["order_number"], order_serializer.data["order_type"], order_serializer.data["crypto_type"], order_serializer.data["fiat_type"], order_amount_crypto, order_amount_formated, crypto_unit_formated, 'FAST', user.email_address, user.phone_number)
 
                     try:
                         # send_order_email("Crypto Buy Order", message, "twhy.brian@gmail.com")
@@ -301,7 +301,7 @@ class TenantsOrdersView(APIView):
 
                     crypto_unit_formated = "{:0,.2f}".format(float(order_serializer.data["crypto_unit_price"]))
 
-                    email_format = EmailFormatter(order_number, serializer.data["order_type"], serializer.data["crypto_type"], serializer.data["fiat_type"], 0, order_amount_formated, crypto_unit_formated)
+                    email_format = EmailFormatter(order_number, serializer.data["order_type"], serializer.data["crypto_type"], serializer.data["fiat_type"], order_serializer.data['order_amount_crypto'], order_amount_formated, crypto_unit_formated)
 
                     message = email_format.sell_email(user.email_address, user.phone_number)
 
