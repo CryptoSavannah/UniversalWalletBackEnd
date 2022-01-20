@@ -206,6 +206,8 @@ class TenantsOrdersView(APIView):
                     rates_json["CELO"]=currency
                 if currency["currencyName"] == "MYST":
                     rates_json["MYST"]=currency
+                if currency["currencyName"] == "Chainlink":
+                    rates_json["LINK"]=currency
 
             try: 
                 user = Kyc.objects.get(id=int(serializer.data['related_kyc']))
@@ -230,7 +232,6 @@ class TenantsOrdersView(APIView):
                     "order_amount_crypto": round(order_amount_crypto, 10),
                     "order_amount_fiat": round(float(serializer.data['order_amount']), 2),
                     "order_status": "UNFULFILLED",
-                    "crypto_unit_price": round(float(crypto_unit_price), 2),
                     "crypto_address": serializer.data['crypto_address'],
                     "crypto_fees": round(float(crypto_fees), 2),
                     "crypto_fees_type": 'FAST',
@@ -457,6 +458,8 @@ class GetCurrentRates(APIView):
                     rates_json["CELO"]=currency
                 if currency["currencyName"] == "MYST":
                     rates_json["MYST"]=currency
+                if currency["currencyName"] == "Chainlink":
+                    rates_json["LINK"]=currency
 
             rates_data = {
                 "BTC":{
@@ -535,6 +538,28 @@ class GetCurrentRates(APIView):
                     "SLOW":rates_json['MYST']['slow'],
                     "NORMAL":rates_json['MYST']['normal'],
                     "FAST":rates_json['MYST']['fast']
+                },
+                "LINK":{
+                    "BUY":rates_json['LINK']['Buy'],
+                    "SELL":rates_json['LINK']['Sell'],
+                    "TRANSFER_FEE_CRYPTO":rates_json['LINK']['transfer_fee_crypt'],
+                    "TRANSFER_FEE_UGX":rates_json['LINK']['transfer_fee_ugx'],
+                    "MINIMUM_CRYPTO_AMOUNT":rates_json['LINK']['minimum_crypt'],
+                    "MINIMUM_UGX_AMOUNT":rates_json['LINK']['minimum_ugx'],
+                    "SLOW":rates_json['MYST']['slow'],
+                    "NORMAL":rates_json['MYST']['normal'],
+                    "FAST":rates_json['MYST']['fast']
+                },
+                "USDT":{
+                    "BUY":rates_json['CUSD']['Buy'],
+                    "SELL":rates_json['CUSD']['Sell'],
+                    "TRANSFER_FEE_CRYPTO":rates_json['CUSD']['transfer_fee_crypt'],
+                    "TRANSFER_FEE_UGX":rates_json['CUSD']['transfer_fee_ugx'],
+                    "MINIMUM_CRYPTO_AMOUNT":rates_json['CUSD']['minimum_crypt'],
+                    "MINIMUM_UGX_AMOUNT":rates_json['CUSD']['minimum_ugx'],
+                    "SLOW":rates_json['CUSD']['slow'],
+                    "NORMAL":rates_json['CUSD']['normal'],
+                    "FAST":rates_json['CUSD']['fast']
                 }
             }
             return Response({"status":200, "data":rates_data})
