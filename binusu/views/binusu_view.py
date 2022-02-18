@@ -435,136 +435,125 @@ class ConfirmPasswordReset(APIView):
 class GetCurrentRates(APIView):
     def get(self, request, format=None):
         currency = request.GET.get('currencySymbol', '')
-        try:
-            if(currency=="KES"):
-                rates_call = get_rates("KES")
-            else:
-                rates_call = get_rates("UGX")
-            rates_json = {}
-            for currency in rates_call:
-                if currency["currencyName"] == "Bitcoin":
-                    rates_json["BTC"]=currency
-                if currency["currencyName"] == "Binusu":
-                    rates_json["BNU"]=currency
-                if currency["currencyName"] == "Ether":
-                    rates_json["ETH"]=currency
-                if currency["currencyName"] == "Litecoin":
-                    rates_json["LTC"]=currency
-                if currency["currencyName"] == "Celo Dollar":
-                    rates_json["CUSD"]=currency
-                if currency["currencyName"] == "Bitcoin Cash":
-                    rates_json["BCH"]=currency
-                if currency["currencyName"] == "CELO":
-                    rates_json["CELO"]=currency
-                if currency["currencyName"] == "MYST":
-                    rates_json["MYST"]=currency
-                if currency["currencyName"] == "Chainlink":
-                    rates_json["LINK"]=currency
+        # try:
+        if(currency=="KES"):
+            rates_call = get_rates("KES")
+        else:
+            rates_call = get_rates("UGX")
+        rates_json = {}
+        for currency in rates_call:
+            if currency["currencyName"] == "Bitcoin":
+                rates_json["BTC"]=currency
+            if currency["currencyName"] == "Binusu":
+                rates_json["BNU"]=currency
+            if currency["currencyName"] == "Ether":
+                rates_json["ETH"]=currency
+            if currency["currencyName"] == "Litecoin":
+                rates_json["LTC"]=currency
+            if currency["currencyName"] == "Celo Dollar":
+                rates_json["CUSD"]=currency
+            if currency["currencyName"] == "Bitcoin Cash":
+                rates_json["BCH"]=currency
+            if currency["currencyName"] == "CELO":
+                rates_json["CELO"]=currency
+            if currency["currencyName"] == "MYST":
+                rates_json["MYST"]=currency
+            if currency["currencyName"] == "Chainlink":
+                rates_json["LINK"]=currency
 
-            rates_data = {
-                "BTC":{
-                    "BUY":rates_json['BTC']['Buy'],
-                    "SELL":rates_json['BTC']['Sell'],
-                    "TRANSFER_FEE_CRYPTO":rates_json['BTC']['transfer_fee_crypt'],
-                    "TRANSFER_FEE_UGX":rates_json['BTC']['transfer_fee_ugx'],
-                    "MINIMUM_CRYPTO_AMOUNT":rates_json['BTC']['minimum_crypt'],
-                    "MINIMUM_UGX_AMOUNT":rates_json['BTC']['minimum_ugx'],
-                    "SLOW":rates_json['BTC']['slow'],
-                    "NORMAL":rates_json['BTC']['normal'],
-                    "FAST":rates_json['BTC']['fast']
-                },
-                "ETH":{
-                    "BUY":rates_json['ETH']['Buy'],
-                    "SELL":rates_json['ETH']['Sell'],
-                    "TRANSFER_FEE_CRYPTO":rates_json['ETH']['transfer_fee_crypt'],
-                    "TRANSFER_FEE_UGX":rates_json['ETH']['transfer_fee_ugx'],
-                    "MINIMUM_CRYPTO_AMOUNT":rates_json['ETH']['minimum_crypt'],
-                    "MINIMUM_UGX_AMOUNT":rates_json['ETH']['minimum_ugx'],
-                    "SLOW":rates_json['ETH']['slow'],
-                    "NORMAL":rates_json['ETH']['normal'],
-                    "FAST":rates_json['ETH']['fast']
-                },
-                "CELO":{
-                    "BUY":rates_json['CELO']['Buy'],
-                    "SELL":rates_json['CELO']['Sell'],
-                    "TRANSFER_FEE_CRYPTO":rates_json['CELO']['transfer_fee_crypt'],
-                    "TRANSFER_FEE_UGX":rates_json['CELO']['transfer_fee_ugx'],
-                    "MINIMUM_CRYPTO_AMOUNT":rates_json['CELO']['minimum_crypt'],
-                    "MINIMUM_UGX_AMOUNT":rates_json['CELO']['minimum_ugx'],
-                    "SLOW":rates_json['CELO']['slow'],
-                    "NORMAL":rates_json['CELO']['normal'],
-                    "FAST":rates_json['CELO']['fast']
-                },
-                "cUSD":{
-                    "BUY":rates_json['CUSD']['Buy'],
-                    "SELL":rates_json['CUSD']['Sell'],
-                    "TRANSFER_FEE_CRYPTO":rates_json['CUSD']['transfer_fee_crypt'],
-                    "TRANSFER_FEE_UGX":rates_json['CUSD']['transfer_fee_ugx'],
-                    "MINIMUM_CRYPTO_AMOUNT":rates_json['CUSD']['minimum_crypt'],
-                    "MINIMUM_UGX_AMOUNT":rates_json['CUSD']['minimum_ugx'],
-                    "SLOW":rates_json['CUSD']['slow'],
-                    "NORMAL":rates_json['CUSD']['normal'],
-                    "FAST":rates_json['CUSD']['fast']
-                },
-                "BCH":{
-                    "BUY":rates_json['BCH']['Buy'],
-                    "SELL":rates_json['BCH']['Sell'],
-                    "TRANSFER_FEE_CRYPTO":rates_json['BCH']['transfer_fee_crypt'],
-                    "TRANSFER_FEE_UGX":rates_json['BCH']['transfer_fee_ugx'],
-                    "MINIMUM_CRYPTO_AMOUNT":rates_json['BCH']['minimum_crypt'],
-                    "MINIMUM_UGX_AMOUNT":rates_json['BCH']['minimum_ugx'],
-                    "SLOW":rates_json['BCH']['slow'],
-                    "NORMAL":rates_json['BCH']['normal'],
-                    "FAST":rates_json['BCH']['fast']
-                },
-                "LTC":{
-                    "BUY":rates_json['LTC']['Buy'],
-                    "SELL":rates_json['LTC']['Sell'],
-                    "TRANSFER_FEE_CRYPTO":rates_json['LTC']['transfer_fee_crypt'],
-                    "TRANSFER_FEE_UGX":rates_json['LTC']['transfer_fee_ugx'],
-                    "MINIMUM_CRYPTO_AMOUNT":rates_json['LTC']['minimum_crypt'],
-                    "MINIMUM_UGX_AMOUNT":rates_json['LTC']['minimum_ugx'],
-                    "SLOW":rates_json['LTC']['slow'],
-                    "NORMAL":rates_json['LTC']['normal'],
-                    "FAST":rates_json['LTC']['fast']
-                },
-                "MYST":{
-                    "BUY":rates_json['MYST']['Buy'],
-                    "SELL":rates_json['MYST']['Sell'],
-                    "TRANSFER_FEE_CRYPTO":rates_json['MYST']['transfer_fee_crypt'],
-                    "TRANSFER_FEE_UGX":rates_json['MYST']['transfer_fee_ugx'],
-                    "MINIMUM_CRYPTO_AMOUNT":rates_json['MYST']['minimum_crypt'],
-                    "MINIMUM_UGX_AMOUNT":rates_json['MYST']['minimum_ugx'],
-                    "SLOW":rates_json['MYST']['slow'],
-                    "NORMAL":rates_json['MYST']['normal'],
-                    "FAST":rates_json['MYST']['fast']
-                },
-                "LINK":{
-                    "BUY":rates_json['LINK']['Buy'],
-                    "SELL":rates_json['LINK']['Sell'],
-                    "TRANSFER_FEE_CRYPTO":rates_json['LINK']['transfer_fee_crypt'],
-                    "TRANSFER_FEE_UGX":rates_json['LINK']['transfer_fee_ugx'],
-                    "MINIMUM_CRYPTO_AMOUNT":rates_json['LINK']['minimum_crypt'],
-                    "MINIMUM_UGX_AMOUNT":rates_json['LINK']['minimum_ugx'],
-                    "SLOW":rates_json['MYST']['slow'],
-                    "NORMAL":rates_json['MYST']['normal'],
-                    "FAST":rates_json['MYST']['fast']
-                },
-                "USDT":{
-                    "BUY":rates_json['CUSD']['Buy'],
-                    "SELL":rates_json['CUSD']['Sell'],
-                    "TRANSFER_FEE_CRYPTO":rates_json['CUSD']['transfer_fee_crypt'],
-                    "TRANSFER_FEE_UGX":rates_json['CUSD']['transfer_fee_ugx'],
-                    "MINIMUM_CRYPTO_AMOUNT":rates_json['CUSD']['minimum_crypt'],
-                    "MINIMUM_UGX_AMOUNT":rates_json['CUSD']['minimum_ugx'],
-                    "SLOW":rates_json['CUSD']['slow'],
-                    "NORMAL":rates_json['CUSD']['normal'],
-                    "FAST":rates_json['CUSD']['fast']
-                }
+        rates_data = {
+            "BTC":{
+                "BUY":rates_json['BTC']['Buy'],
+                "SELL":rates_json['BTC']['Sell'],
+                "TRANSFER_FEE_CRYPTO":rates_json['BTC']['transfer_fee_crypt'],
+                "TRANSFER_FEE_UGX":rates_json['BTC']['transfer_fee_ugx'],
+                "MINIMUM_CRYPTO_AMOUNT":rates_json['BTC']['minimum_crypt'],
+                "MINIMUM_UGX_AMOUNT":rates_json['BTC']['minimum_ugx'],
+                "SLOW":rates_json['BTC']['slow'],
+                "NORMAL":rates_json['BTC']['normal'],
+                "FAST":rates_json['BTC']['fast']
+            },
+            "ETH":{
+                "BUY":rates_json['ETH']['Buy'],
+                "SELL":rates_json['ETH']['Sell'],
+                "TRANSFER_FEE_CRYPTO":rates_json['ETH']['transfer_fee_crypt'],
+                "TRANSFER_FEE_UGX":rates_json['ETH']['transfer_fee_ugx'],
+                "MINIMUM_CRYPTO_AMOUNT":rates_json['ETH']['minimum_crypt'],
+                "MINIMUM_UGX_AMOUNT":rates_json['ETH']['minimum_ugx'],
+                "SLOW":rates_json['ETH']['slow'],
+                "NORMAL":rates_json['ETH']['normal'],
+                "FAST":rates_json['ETH']['fast']
+            },
+            "CELO":{
+                "BUY":rates_json['CELO']['Buy'],
+                "SELL":rates_json['CELO']['Sell'],
+                "TRANSFER_FEE_CRYPTO":rates_json['CELO']['transfer_fee_crypt'],
+                "TRANSFER_FEE_UGX":rates_json['CELO']['transfer_fee_ugx'],
+                "MINIMUM_CRYPTO_AMOUNT":rates_json['CELO']['minimum_crypt'],
+                "MINIMUM_UGX_AMOUNT":rates_json['CELO']['minimum_ugx'],
+                "SLOW":rates_json['CELO']['slow'],
+                "NORMAL":rates_json['CELO']['normal'],
+                "FAST":rates_json['CELO']['fast']
+            },
+            "cUSD":{
+                "BUY":rates_json['CUSD']['Buy'],
+                "SELL":rates_json['CUSD']['Sell'],
+                "TRANSFER_FEE_CRYPTO":rates_json['CUSD']['transfer_fee_crypt'],
+                "TRANSFER_FEE_UGX":rates_json['CUSD']['transfer_fee_ugx'],
+                "MINIMUM_CRYPTO_AMOUNT":rates_json['CUSD']['minimum_crypt'],
+                "MINIMUM_UGX_AMOUNT":rates_json['CUSD']['minimum_ugx'],
+                "SLOW":rates_json['CUSD']['slow'],
+                "NORMAL":rates_json['CUSD']['normal'],
+                "FAST":rates_json['CUSD']['fast']
+            },
+            "BCH":{
+                "BUY":rates_json['BCH']['Buy'],
+                "SELL":rates_json['BCH']['Sell'],
+                "TRANSFER_FEE_CRYPTO":rates_json['BCH']['transfer_fee_crypt'],
+                "TRANSFER_FEE_UGX":rates_json['BCH']['transfer_fee_ugx'],
+                "MINIMUM_CRYPTO_AMOUNT":rates_json['BCH']['minimum_crypt'],
+                "MINIMUM_UGX_AMOUNT":rates_json['BCH']['minimum_ugx'],
+                "SLOW":rates_json['BCH']['slow'],
+                "NORMAL":rates_json['BCH']['normal'],
+                "FAST":rates_json['BCH']['fast']
+            },
+            "LTC":{
+                "BUY":rates_json['LTC']['Buy'],
+                "SELL":rates_json['LTC']['Sell'],
+                "TRANSFER_FEE_CRYPTO":rates_json['LTC']['transfer_fee_crypt'],
+                "TRANSFER_FEE_UGX":rates_json['LTC']['transfer_fee_ugx'],
+                "MINIMUM_CRYPTO_AMOUNT":rates_json['LTC']['minimum_crypt'],
+                "MINIMUM_UGX_AMOUNT":rates_json['LTC']['minimum_ugx'],
+                "SLOW":rates_json['LTC']['slow'],
+                "NORMAL":rates_json['LTC']['normal'],
+                "FAST":rates_json['LTC']['fast']
+            },
+            # "LINK":{
+            #     "BUY":rates_json['LINK']['Buy'],
+            #     "SELL":rates_json['LINK']['Sell'],
+            #     "TRANSFER_FEE_CRYPTO":rates_json['LINK']['transfer_fee_crypt'],
+            #     "TRANSFER_FEE_UGX":rates_json['LINK']['transfer_fee_ugx'],
+            #     "MINIMUM_CRYPTO_AMOUNT":rates_json['LINK']['minimum_crypt'],
+            #     "MINIMUM_UGX_AMOUNT":rates_json['LINK']['minimum_ugx'],
+            #     "SLOW":rates_json['MYST']['slow'],
+            #     "NORMAL":rates_json['MYST']['normal'],
+            #     "FAST":rates_json['MYST']['fast']
+            # },
+            "USDT":{
+                "BUY":rates_json['CUSD']['Buy'],
+                "SELL":rates_json['CUSD']['Sell'],
+                "TRANSFER_FEE_CRYPTO":rates_json['CUSD']['transfer_fee_crypt'],
+                "TRANSFER_FEE_UGX":rates_json['CUSD']['transfer_fee_ugx'],
+                "MINIMUM_CRYPTO_AMOUNT":rates_json['CUSD']['minimum_crypt'],
+                "MINIMUM_UGX_AMOUNT":rates_json['CUSD']['minimum_ugx'],
+                "SLOW":rates_json['CUSD']['slow'],
+                "NORMAL":rates_json['CUSD']['normal'],
+                "FAST":rates_json['CUSD']['fast']
             }
-            return Response({"status":200, "data":rates_data})
-        except Exception as e:
-            return Response({"status":404, "error":"Rates currently unavailable"}, status=status.HTTP_404_NOT_FOUND)
+        }
+        return Response({"status":200, "data":rates_data})
+        # except Exception as e:
+        #     return Response({"status":404, "error":"Rates currently unavailable"}, status=status.HTTP_404_NOT_FOUND)
 
 class GetSpecificOrderDetails(APIView):
     def post(self, request, format=None):
