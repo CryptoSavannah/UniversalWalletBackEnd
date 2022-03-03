@@ -19,7 +19,9 @@ CRYPTO_TYPES = [
     ('BCH', 'BCH'),
     ('MYST', 'MYST'),
     ('LINK', 'LINK'),
-    ('USDT', 'USDT')
+    ('USDT', 'USDT'),
+    ('SEA', 'SEA'),
+    ('BNB', 'BNB')
 ]
 
 FIAT_TYPES = [

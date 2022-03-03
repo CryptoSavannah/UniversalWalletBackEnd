@@ -460,6 +460,10 @@ class GetCurrentRates(APIView):
                 rates_json["MYST"]=currency
             if currency["currencyName"] == "Chainlink":
                 rates_json["LINK"]=currency
+            if currency["currencyName"] == "Binance Coin":
+                rates_json["BNB"]=currency
+            if currency["currencyName"] == "Starsharks SEA":
+                rates_json["SEA"]=currency
 
         rates_data = {
             "BTC":{
@@ -549,6 +553,28 @@ class GetCurrentRates(APIView):
                 "SLOW":rates_json['CUSD']['slow'],
                 "NORMAL":rates_json['CUSD']['normal'],
                 "FAST":rates_json['CUSD']['fast']
+            },
+            "BNB":{
+                "BUY":rates_json['BNB']['Buy'],
+                "SELL":rates_json['BNB']['Sell'],
+                "TRANSFER_FEE_CRYPTO":rates_json['BNB']['transfer_fee_crypt'],
+                "TRANSFER_FEE_UGX":rates_json['BNB']['transfer_fee_ugx'],
+                "MINIMUM_CRYPTO_AMOUNT":rates_json['BNB']['minimum_crypt'],
+                "MINIMUM_UGX_AMOUNT":rates_json['BNB']['minimum_ugx'],
+                "SLOW":rates_json['BNB']['slow'],
+                "NORMAL":rates_json['BNB']['normal'],
+                "FAST":rates_json['BNB']['fast']
+            },
+            "SEA":{
+                "BUY":rates_json['SEA']['Buy'],
+                "SELL":rates_json['SEA']['Sell'],
+                "TRANSFER_FEE_CRYPTO":rates_json['SEA']['transfer_fee_crypt'],
+                "TRANSFER_FEE_UGX":rates_json['SEA']['transfer_fee_ugx'],
+                "MINIMUM_CRYPTO_AMOUNT":rates_json['SEA']['minimum_crypt'],
+                "MINIMUM_UGX_AMOUNT":rates_json['SEA']['minimum_ugx'],
+                "SLOW":rates_json['SEA']['slow'],
+                "NORMAL":rates_json['SEA']['normal'],
+                "FAST":rates_json['SEA']['fast']
             }
         }
         return Response({"status":200, "data":rates_data})
