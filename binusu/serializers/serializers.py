@@ -161,3 +161,9 @@ class OrderCompletionUpdateSerializer(serializers.Serializer):
     errorCode   =  serializers.IntegerField() 
     status      =  serializers.IntegerField()  
     data        =  serializers.JSONField()
+
+class OrderCompletionUpdateSerializerTwo(serializers.Serializer):
+    """
+    Serializer for order updates 2
+    """ 
+    Response        =  serializers.JSONField()
