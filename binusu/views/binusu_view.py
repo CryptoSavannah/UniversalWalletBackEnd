@@ -640,13 +640,14 @@ class OrderCompletionCollectionCrypto(APIView):
             kyc = Kyc.objects.get(id=order.related_kyc.id)
             formated_number = kyc.phone_number[1:]
             reconstructed_number = "{}{}".format("256", formated_number)
+            
             if(order.order_status == "UNFULFILLED"):
                 data = ({
                     "wal_api_key":           "a8637118f1fedbaa33317ab5e4458f03e0e24885f20b2b2d6b1cfe110ea9640f",
                     "method": "bms_deposit",
                     "payid": order.order_number,
                     "currency": "BTC",
-                    "amount": float(order.total_payable_amount_fiat),
+                    "amount": float(order.order_amount_fiat),
                     "format": "JSON-POPUP",
                     "notes": reconstructed_number,
                     "email": kyc.email_address,
