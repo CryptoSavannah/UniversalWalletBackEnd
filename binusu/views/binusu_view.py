@@ -117,6 +117,7 @@ class OrdersView(APIView):
                     "crypto_fees_type": serializer.data['crypto_fees_type'],
                     "total_payable_amount_fiat": serializer.data['total_payable_amount_fiat'],
                     "warning": serializer.data['warning'],
+                    "tenant_id": 0
                 }
 
                 order_serializer = OrdersSerializer(data=order_data)
