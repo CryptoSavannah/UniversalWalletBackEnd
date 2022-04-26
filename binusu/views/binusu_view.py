@@ -632,6 +632,49 @@ class OrderCompletionCollection(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class OrderCompletionCollectionCrypto(APIView):
+    def post(self, request, format=None):
+        serializer = OrderCompletionSerializer(data=request.data)
+        if serializer.is_valid():
+            order = Orders.objects.get(id=serializer.data["related_order"])
+            kyc = Kyc.objects.get(id=order.related_kyc.id)
+            formated_number = kyc.phone_number[1:]
+            reconstructed_number = "{}{}".format("256", formated_number)
+            if(order.order_status == "UNFULFILLED"):
+                data = ({
+                    "wal_api_key":           "a8637118f1fedbaa33317ab5e4458f03e0e24885f20b2b2d6b1cfe110ea9640f",
+                    "method": "bms_deposit",
+                    "payid": order.order_number,
+                    "currency": "BTC",
+                    "amount": float(order.total_payable_amount_fiat),
+                    "format": "JSON-POPUP",
+                    "notes": reconstructed_number,
+                    "email": kyc.email_address,
+                    "auto_exchange": 0
+                })
+                
+                try:
+                    call = trigger_collection(data)
+                    order_completion_data = {
+                        'related_order':order.id,
+                        'currency':call["Response"]["data"]["currency"],
+                        'amount':call["Response"]["data"]["amount_to_transfer"],
+                        'invoice_number':call["Response"]["data"]["invoiceNo"],
+                        'pay_id':call["Response"]["data"]["payment_id"],
+                    }
+
+                    order_completion_serializer = OrderCompletionsCreateSerializer(data=order_completion_data)
+                    order_completion_serializer.is_valid(raise_exception=True)
+                    order_completion_serializer.save()
+
+                    return Response({"status":200, "data": order_completion_serializer.data, "pop-up": call["Response"]["data"]["popup"]}, status=status.HTTP_200_OK)
+                except Exception as e:
+                    send_error_telegram(e)
+                    return Response({"status":424, "error":"Service Unavailable due to failed dependency"}, status=status.HTTP_424_FAILED_DEPENDENCY)
+            return Response({"status":404, "error":"OPEN ORDER NOT FOUND"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class ClientOrderCompletionView(APIView):
     def post(self, request, format=None):
         serializer = OrderCompletionSerializer(data=request.data)

@@ -65,7 +65,7 @@ class Orders(models.Model):
 class OrderCompletions(models.Model):
     related_order       =   models.ForeignKey(Orders, on_delete=models.CASCADE, related_name="related_order")
     currency            =   models.CharField(max_length=8)
-    amount              =   models.DecimalField(max_digits=20, decimal_places=2)
+    amount              =   models.DecimalField(max_digits=20, decimal_places=8)
     amount_received     =   models.CharField(max_length=10, blank=True, null=True)
     network_txid        =   models.CharField(max_length=10, blank=True, null=True)
     network_confirmations   =   models.IntegerField(null=True, blank=True)

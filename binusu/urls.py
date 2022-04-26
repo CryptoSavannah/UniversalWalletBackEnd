@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views.binusu_view import KycListView, OrdersView, ConfirmKyc, ResetPassword, ConfirmPasswordReset, GetCurrentRates, OrdersStatistics, UpdateOrderDetails, ClientOrdersView, OrderCompletionCollection, GetSpecificOrderDetails, UpdateOrderCompletionStatus, ClientOrderCompletionView, TenantsOrdersView
+from .views.binusu_view import KycListView, OrdersView, ConfirmKyc, ResetPassword, ConfirmPasswordReset, GetCurrentRates, OrdersStatistics, UpdateOrderDetails, ClientOrdersView, OrderCompletionCollection, GetSpecificOrderDetails, UpdateOrderCompletionStatus, ClientOrderCompletionView, TenantsOrdersView, OrderCompletionCollectionCrypto
 from .views.account_view import UserListView, UserLoginView, UserConfirmAccount
 
 urlpatterns = [
@@ -8,6 +8,7 @@ urlpatterns = [
     path('binusu/orders', OrdersView.as_view(), name="binusu-orders"),
     path('binusu/tenants/orders', TenantsOrdersView.as_view(), name="binusu-tenant-orders"),
     path('binusu/orders/collection', OrderCompletionCollection.as_view(), name="binusu-orders-collection"),
+    path('binusu/orders/collection/crypto', OrderCompletionCollectionCrypto.as_view(), name="binusu-orders-collection-crypto"),
     path('binusu/orders/collection/update', UpdateOrderCompletionStatus.as_view(), name="binusu-orders-collection-update"),
     path('binusu/orders/specific', GetSpecificOrderDetails.as_view(), name="binusu-orders-specific"),
     path('binusu/orders/stats', OrdersStatistics.as_view(), name="binusu-orders-stats"),
