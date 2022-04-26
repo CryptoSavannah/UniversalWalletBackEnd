@@ -204,10 +204,10 @@ class TenantsOrdersView(APIView):
                     rates_json["BCH"]=currency
                 if currency["currencyName"] == "CELO":
                     rates_json["CELO"]=currency
-                if currency["currencyName"] == "MYST":
-                    rates_json["MYST"]=currency
-                if currency["currencyName"] == "Chainlink":
-                    rates_json["LINK"]=currency
+                if currency["currencyName"] == "Binance Coin":
+                    rates_json["BNB"]=currency
+                if currency["currencyName"] == "Starsharks SEA":
+                    rates_json["SEA"]=currency
 
             try: 
                 user = Kyc.objects.get(id=int(serializer.data['related_kyc']))
