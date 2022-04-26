@@ -74,7 +74,7 @@ class ClientOrdersView(APIView):
     def post(self, request, format=None):
         serializer = ClientOrderSerializer(data=request.data)
         if serializer.is_valid():
-            orders_serializer = OrdersDetailSerializer(Orders.objects.filter(related_kyc=serializer.data["related_kyc"]), many=True)
+            orders_serializer = OrdersDetailSerializer(Orders.objects.filter(related_kyc=serializer.data["related_kyc"]).filter(order_status=serializer.data["status"]), many=True)
             return Response({"status":200, "data": orders_serializer.data}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -625,6 +625,11 @@ class OrderCompletionCollection(APIView):
                     order_completion_serializer = OrderCompletionsCreateSerializer(data=order_completion_data)
                     order_completion_serializer.is_valid(raise_exception=True)
                     order_completion_serializer.save()
+                    
+                    Orders.objects.update_or_create(
+                    id=order.id, defaults={'order_status':"PROCESSING"}
+                    )
+
                     return Response({"status":200, "data": order_completion_serializer.data, "popup": call["Response"]["data"]["popup"]}, status=status.HTTP_200_OK)
                 except Exception as e:
                     send_error_telegram(e)
@@ -669,6 +674,10 @@ class OrderCompletionCollectionCrypto(APIView):
                     order_completion_serializer.is_valid(raise_exception=True)
                     order_completion_serializer.save()
 
+                    Orders.objects.update_or_create(
+                    id=order.id, defaults={'order_status':"PROCESSING"}
+                    )
+
                     return Response({"status":200, "data": order_completion_serializer.data, "popup": call["Response"]["data"]["popup"]}, status=status.HTTP_200_OK)
                 except Exception as e:
                     send_error_telegram(e)
@@ -692,10 +701,17 @@ class UpdateOrderCompletionStatus(APIView):
         if serializer.is_valid():
             try:
                 related_completion = OrderCompletions.objects.get(pay_id=serializer.data["pay_id"])
+
+                related_order = Orders.objects.get(id=related_completion.related_order.id)
+
                 if(related_completion.completion_status==False and serializer.data["status"] == 0):
 
                     OrderCompletions.objects.update_or_create(
                     id=related_completion.id, defaults={'completion_status':True}
+                    )
+
+                    Orders.objects.update_or_create(
+                    id=related_order.id, defaults={'order_status':"FILFILLED"}
                     )
 
                     return Response({"status":200, "message":"Successfully Updated"}, status=status.HTTP_200_OK)
@@ -703,6 +719,10 @@ class UpdateOrderCompletionStatus(APIView):
 
                     OrderCompletions.objects.update_or_create(
                     id=related_completion.id, defaults={'callback_response':False}
+                    )
+
+                    Orders.objects.update_or_create(
+                    id=related_order.id, defaults={'order_status':"FAILED"}
                     )
 
                     return Response({"status":200, "message":"Successfully Updated"}, status=status.HTTP_200_OK)

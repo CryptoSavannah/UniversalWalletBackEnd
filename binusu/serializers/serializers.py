@@ -89,6 +89,7 @@ class ClientOrderSerializer(serializers.Serializer):
     Serializer for returning orders
     """
     related_kyc             =   serializers.IntegerField()
+    status                  =   serializers.CharField(max_length=30)
 
 
 class OrdersDetailSerializer(serializers.ModelSerializer):
