@@ -82,7 +82,7 @@ class OrdersSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Orders
-        fields = ('id', 'related_kyc', 'order_number', 'order_type', 'crypto_type', 'fiat_type', 'order_amount_crypto', 'order_amount_fiat', 'order_status', 'crypto_unit_price', 'crypto_address', 'crypto_fees', 'total_payable_amount_fiat', 'warning')
+        fields = ('id', 'related_kyc', 'order_number', 'order_type', 'crypto_type', 'fiat_type', 'order_amount_crypto', 'order_amount_fiat', 'order_status', 'crypto_unit_price', 'crypto_address', 'crypto_fees', 'total_payable_amount_fiat', 'warning', 'tenant_id')
 
 class ClientOrderSerializer(serializers.Serializer):
     """
