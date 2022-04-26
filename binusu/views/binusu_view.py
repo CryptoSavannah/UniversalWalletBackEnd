@@ -606,7 +606,7 @@ class OrderCompletionCollection(APIView):
                     "payid": order.order_number,
                     "currency": "UG-MM",
                     "amount": float(order.total_payable_amount_fiat),
-                    "format": "JSON",
+                    "format": "JSON-POPUP",
                     "email": kyc.email_address,
                     "notes": reconstructed_number
                 }
@@ -624,7 +624,7 @@ class OrderCompletionCollection(APIView):
                     order_completion_serializer = OrderCompletionsCreateSerializer(data=order_completion_data)
                     order_completion_serializer.is_valid(raise_exception=True)
                     order_completion_serializer.save()
-                    return Response({"status":200, "data": order_completion_serializer.data}, status=status.HTTP_200_OK)
+                    return Response({"status":200, "data": order_completion_serializer.data, "popup": call["Response"]["data"]["popup"]}, status=status.HTTP_200_OK)
                 except Exception as e:
                     send_error_telegram(e)
                     return Response({"status":424, "error":"Service Unavailable due to failed dependency"}, status=status.HTTP_424_FAILED_DEPENDENCY)
@@ -667,7 +667,7 @@ class OrderCompletionCollectionCrypto(APIView):
                     order_completion_serializer.is_valid(raise_exception=True)
                     order_completion_serializer.save()
 
-                    return Response({"status":200, "data": order_completion_serializer.data, "pop-up": call["Response"]["data"]["popup"]}, status=status.HTTP_200_OK)
+                    return Response({"status":200, "data": order_completion_serializer.data, "popup": call["Response"]["data"]["popup"]}, status=status.HTTP_200_OK)
                 except Exception as e:
                     send_error_telegram(e)
                     return Response({"status":424, "error":"Service Unavailable due to failed dependency"}, status=status.HTTP_424_FAILED_DEPENDENCY)
