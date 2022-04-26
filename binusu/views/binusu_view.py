@@ -613,12 +613,13 @@ class OrderCompletionCollection(APIView):
                 
                 try:
                     call = trigger_collection(data)
+                    print(call)
                     order_completion_data = {
                         'related_order':order.id,
-                        'currency':call["Response"]["currency"],
-                        'amount':call["Response"]["amount_to_transfer"],
-                        'invoice_number':call["Response"]["invoiceNo"],
-                        'pay_id':call["Response"]["payment_id"],
+                        'currency':call["Response"]['data']["currency"],
+                        'amount':call["Response"]["data"]["amount_to_transfer"],
+                        'invoice_number':call["Response"]["data"]["invoiceNo"],
+                        'pay_id':call["Response"]["data"]["payment_id"],
                     }
 
                     order_completion_serializer = OrderCompletionsCreateSerializer(data=order_completion_data)
