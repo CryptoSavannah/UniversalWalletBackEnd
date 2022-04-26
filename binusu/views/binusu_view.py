@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 
-from ..serializers.serializers import KycSerializer, KycConfirmSerializer, OrdersSerializer, EmailLogsSerializer, TelegramLogsSerializer, OrderReceiverSerializer, KycUserSerializer, PasswordResetSerializer, PasswordResetCreateSerializer, PasswordConfirmSerializer, OrdersDetailSerializer, OrdersUpdateSerializer, ClientOrderSerializer, OrderCompletionsCreateSerializer, OrderCompletionsDetailSerializer, OrderCompletionSerializer, OrderCompletionUpdateSerializer, TenantOrderReceiverSerializer
+from ..serializers.serializers import KycSerializer, KycConfirmSerializer, OrdersSerializer, EmailLogsSerializer, TelegramLogsSerializer, OrderReceiverSerializer, KycUserSerializer, PasswordResetSerializer, PasswordResetCreateSerializer, PasswordConfirmSerializer, OrdersDetailSerializer, OrdersUpdateSerializer, ClientOrderSerializer, OrderCompletionsCreateSerializer, OrderCompletionsDetailSerializer, OrderCompletionSerializer, OrderCompletionUpdateSerializer, TenantOrderReceiverSerializer, OrderCompletionUpdateSerializerTwo
 
 from ..helpers.helpers import get_random_alphanumeric_string
 from ..helpers.email_handler import EmailFormatter, PersonalEmailFormatter, email_structure
@@ -697,14 +697,16 @@ class ClientOrderCompletionView(APIView):
 
 class UpdateOrderCompletionStatus(APIView):
     def post(self, request, format=None):
-        serializer = OrderCompletionUpdateSerializer(data=request.data)
+        serializer = OrderCompletionUpdateSerializerTwo(data=request.data)
         if serializer.is_valid():
             try:
-                related_completion = OrderCompletions.objects.get(pay_id=serializer.data["pay_id"])
+                callback = serializer.data["Response"]
+                
+                related_completion = OrderCompletions.objects.get(pay_id=callback["pay_id"])
 
                 related_order = Orders.objects.get(id=related_completion.related_order.id)
 
-                if(related_completion.completion_status==False and serializer.data["status"] == 0):
+                if(related_completion.completion_status==False and callback["status"] == "success"):
 
                     OrderCompletions.objects.update_or_create(
                     id=related_completion.id, defaults={'completion_status':True}
@@ -715,7 +717,7 @@ class UpdateOrderCompletionStatus(APIView):
                     )
 
                     return Response({"status":200, "message":"Successfully Updated"}, status=status.HTTP_200_OK)
-                if(related_completion.completion_status==False and serializer.data["status"] == 1):
+                if(related_completion.completion_status==False and callback["status"] == "error"):
 
                     OrderCompletions.objects.update_or_create(
                     id=related_completion.id, defaults={'callback_response':False}
