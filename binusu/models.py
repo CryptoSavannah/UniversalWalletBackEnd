@@ -52,6 +52,7 @@ class Orders(models.Model):
     crypto_fees_type            = models.CharField(max_length=6, choices=FEES, null=True, blank=True)
     total_payable_amount_fiat   = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
     warning                     = models.IntegerField(default=0)
+    tenant_id                   = models.IntegerField(default=0)
     order_status                = models.CharField(max_length=15, choices=ORDER_STATUS, default='UNFULFILLED')  
     crypto_unit_price           = models.DecimalField(max_digits=20, decimal_places=2)
     completed_by                = models.CharField(max_length=250, null=True, blank=True)
