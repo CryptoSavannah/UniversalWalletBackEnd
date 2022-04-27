@@ -713,7 +713,7 @@ class UpdateOrderCompletionStatus(APIView):
                     )
 
                     Orders.objects.update_or_create(
-                    id=related_order.id, defaults={'order_status':"FILFILLED"}
+                    id=related_order.id, defaults={'order_status':"FULFILLED"}
                     )
 
                     return Response({"status":200, "message":"Successfully Updated"}, status=status.HTTP_200_OK)
