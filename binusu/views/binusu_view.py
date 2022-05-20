@@ -217,6 +217,7 @@ class TenantsOrdersView(APIView):
 
                     crypto_unit_price = rates_json[serializer.data['crypto_type']]['Sell']
 
+
                     crypto_fees = rates_json[serializer.data['crypto_type']]['fast']
 
                     order_amount_minus_fees = float(serializer.data['order_amount']) - float(crypto_fees)
@@ -232,6 +233,7 @@ class TenantsOrdersView(APIView):
                     "fiat_type":    serializer.data['fiat_type'],
                     "order_amount_crypto": round(order_amount_crypto, 10),
                     "order_amount_fiat": round(float(serializer.data['order_amount']), 2),
+                    "crypto_unit_price": round(float(crypto_unit_price), 2),
                     "order_status": "UNFULFILLED",
                     "crypto_address": serializer.data['crypto_address'],
                     "crypto_fees": round(float(crypto_fees), 2),
@@ -634,7 +636,7 @@ class OrderCompletionCollection(APIView):
                 except Exception as e:
                     send_error_telegram(e)
                     return Response({"status":424, "error":"Service Unavailable due to failed dependency"}, status=status.HTTP_424_FAILED_DEPENDENCY)
-            return Response({"status":404, "error":"OPEN OPRDER NOT FOUND"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"status":404, "error":"OPEN ORDER NOT FOUND"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -715,6 +717,21 @@ class UpdateOrderCompletionStatus(APIView):
                     Orders.objects.update_or_create(
                     id=related_order.id, defaults={'order_status':"FULFILLED"}
                     )
+
+                    if(order.order_type == "BUY"):
+                        pass
+                    if(order.order_type == "SELL"):
+                        data = {
+                            "wal_api_key": "934fe1b4b164e7b68cc4f4074efe4f9e8741cf080aaa1b073990e8462c011fa4",
+                            "method": "bms_withdraw",
+                            "payid": "61ff53120d339ecd952c4e9851d910488f684efd847cac205f622b40840c123",
+                            "currency": "UG-MM",
+                            "amount": "1000",
+                            "format": "JSON",
+                            "recipient": "256781712892",
+                            "notes": "Bnu1298js",
+                            "email": "nagimesi@gmail.com"
+                        }
 
                     return Response({"status":200, "message":"Successfully Updated"}, status=status.HTTP_200_OK)
                 if(related_completion.completion_status==False and callback["status"] == "error"):
