@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 import datetime
 from corsheaders.defaults import default_headers
 
@@ -26,9 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'yc=n&m4mb+y!k33+i8lz70p4p)!0g-zjnth@unnf7n=3dz#)_)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['mc1.cryptosavannah.com']
 
 
 # Application definition
@@ -180,6 +181,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MEDIA_URL = '/media/'
 
@@ -188,10 +190,12 @@ AUTH_USER_MODEL = 'accounts.User'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
+EMAIL_HOST_USER = 'kapsonkatongole@gmail.com'
+EMAIL_HOST_PASSWORD = 'pdtedbdslcnfozki'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'default from email'
 
-ENVIRONMENT = "TESTING"
+TELEGRAM_TOKEN='1582155200:AAGHD8YRWByf2tVQ5XuobMOVX9KUH1gmdzA'
+TELEGRAM_GROUP_ID='-1001332428147'
 
-TELEGRAM_TOKEN=''
-TELEGRAM_GROUP_ID=''
+ENVIRONMENT = "PRODUCTION"

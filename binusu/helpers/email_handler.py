@@ -46,6 +46,7 @@ class EmailFormatter:
     def sell_email(self, email_address, phone_number):
         return '<!DOCTYPE html><html><head><style>{}</style></head><body><h2>  {} Order Number: {} </h2><table><tr><th>Order Detail</th><th>Order Amount</th></tr><tr><td>Crypto Type</td><td>{}</td></tr><tr><td>Crypto Amount</td><td>{}</td></tr><tr><td>Fiat Amount ({})</td><td>{}</td></tr><tr><td>Email Address</td><td>{}</td></tr><tr><td>Phone Number</td><td>{}</td></tr></table></body></html>'.format(self.escaped_style, self.order_type, self.order_number, self.crypto_type, self.order_amount_crypto, self.fiat_type, self.order_amount_fiat, email_address, phone_number)
 
+
     def client_sell_email(self):
         return  '<!DOCTYPE html><html><head><style>{}</style></head><body><h2>  {} Order Number: {} </h2><table><tr><th>Order Detail</th><th>Order Amount</th></tr><tr><td>Crypto Type</td><td>{}</td></tr><tr><td>Crypto Amount</td><td>{}</td></tr><tr><td>Fiat Amount ({})</td><td>{}</td></tr></table><br><br><h1>WARNING: Please be ware of investment schemes that promise returns which are too good to be true. This usually ends up being a CON. binusu.com is not responsible for where you invest your money</h1></body></html>'.format(self.escaped_style, self.order_type, self.order_number, self.crypto_type, self.order_amount_crypto, self.fiat_type, self.order_amount_fiat)
 

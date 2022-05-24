@@ -2,6 +2,7 @@ __pycache__/
 *.py[cod]
 .vscode
 accounts/helpers/accounts.py
+loyalty_api/settings.py
 binusu/helpers/baluwa.py
 binusu/constants/constants.py
 loyalty_api/loyalty_api/settings.py
