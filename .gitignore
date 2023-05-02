@@ -1,7 +1,12 @@
-__pycache__/
-*.py[cod]
-.vscode
-accounts/helpers/accounts.py
-binusu/helpers/baluwa.py
-binusu/constants/constants.py
-loyalty_api/loyalty_api/settings.py
+# IDE Files
+#-------------------------
+/nbproject/
+.idea/*
+
+## Sublime Text cache files
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
+
