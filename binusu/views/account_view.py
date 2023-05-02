@@ -10,7 +10,7 @@ from ..serializers.account_serializer import UserCreateSerializer, UserDetailSer
 
 from ..helpers.helpers import generate_otp
 from ..helpers.email_handler import AdminEmailFormatter
-from ..helpers.baluwa import send_order_email
+# from ..helpers.baluwa import send_order_email
 
 from loyalty_api.settings import SECRET_KEY
 

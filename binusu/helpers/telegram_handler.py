@@ -1,5 +1,5 @@
 from loyalty_api.settings import TELEGRAM_TOKEN, TELEGRAM_GROUP_ID, ENVIRONMENT
-from ..constants.constants import TELEGRAM_ERROR_GROUP, TELEGRAM_ERROR_TOKEN
+# from ..constants.constants import TELEGRAM_ERROR_GROUP, TELEGRAM_ERROR_TOKEN
 import requests
 
 

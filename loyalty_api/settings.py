@@ -134,9 +134,9 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'loyalty_db',
-        'USER': 'djangoappguy',
-        'PASSWORD': 'django1234',
+        'NAME': 'universal_wallet_db',
+        'USER': 'otim22',
+        'PASSWORD': 'passWord//',
         'HOST': 'localhost',
         'PORT': '5432',
     }

@@ -9,7 +9,7 @@ from ..serializers.user_serializer import UserSerializer, TokenSerializer, UserS
 from loyalty.serializers.loyalty_serializer import LoyaltyUserCreateSerializer, LoyaltyTenantsDetailsSerializer
 
 from loyalty.models import LoyaltyUserPoints, LoyaltyTenants
-from ..helpers.accounts import send_otp
+# from ..helpers.accounts import send_otp
 
 # Get the JWT settings, add these lines after the import/from lines
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER

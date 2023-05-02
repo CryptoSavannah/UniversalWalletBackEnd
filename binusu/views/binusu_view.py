@@ -14,7 +14,7 @@ from ..serializers.serializers import KycSerializer, KycConfirmSerializer, Order
 from ..helpers.helpers import get_random_alphanumeric_string
 from ..helpers.email_handler import EmailFormatter, PersonalEmailFormatter, email_structure
 from ..helpers.telegram_handler import send_telegram, telegram_buy_message, telegram_sell_message, send_error_telegram, telegram_error_message
-from ..helpers.baluwa import send_order_email
+# from ..helpers.baluwa import send_order_email
 from ..helpers.rates import get_rates, trigger_collection
 
 class KycListView(APIView):
